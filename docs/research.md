@@ -24,6 +24,26 @@ No reusable firmware/DBC repository was identified in the inspected pages. Its d
 
 [Communications-port pinout](https://www.braapzap.com/post/surron-ultrabee-battery-com-port-pinout) is a connector lead. Retrieved text did not provide a usable pin table; diagram assignments were not independently verified and are not transcribed here. Obtain the original diagram, viewing direction and specimen details before comparison. The footer states that BraapZap is no longer in business; ongoing support cannot be assumed.
 
+## Surron T-box FCC filing and firmware investigation
+
+[FCC ID 2A92B-QL-TBOX-JM](https://fccid.io/2A92B-QL-TBOX-JM) is a public mirror of the US radio-certification filing for Surron's **QL-TBOX-JM telematics module**, submitted by Chongqing Qiulong Technology. The listed grant date is 22 March 2023. Its exhibits include the manufacturer user manual, internal PCB photographs, external photographs, label information and radio test reports.
+
+**Why it matters:** the internal photographs provide a starting point for hardware identification before opening a unit. They may help identify components and candidate interfaces, but they are not a validated schematic, firmware image, debug pinout or CAN specification. Schematics, block diagram and operational description are listed as metadata only, rather than available public documents.
+
+**Applicability:** confirm the model and hardware revision on the actual Ultra Bee T-box. A 2023 filing does not prove that every 2023 Ultra Bee, regional module or later revision uses identical hardware. No chip identities, debug pins or firmware readout method have been verified by Bee-Link.
+
+The [manufacturer T-box manual](https://device.report/manual/9999122) describes CAN message upload, Bluetooth bus-data queries, device binding, remote-command delivery, low-power management, diagnostics and firmware updates. These are documented module capabilities, not proof that every feature is enabled on our target bike. In particular, its reference to Bluetooth firmware download may mean transferring an update **into** the device; it does not establish readback of installed firmware.
+
+Potential investigation routes, not confirmed access methods:
+
+- Observe normal CAN traffic to distinguish unsolicited telemetry from requests or commands.
+- Inspect the owner's Bluetooth interaction and Android app to understand local queries and update handling.
+- Examine an official update package if legitimately obtainable; it may be encrypted, compressed or a partial update.
+- Identify PCB components and candidate UART/debug interfaces on a spare module; readout may be protected.
+- Consider external-flash inspection only if suitable memory is identified; firmware may be internal or encrypted.
+
+No published Surron T-box firmware dump or confirmed extraction procedure was located in this review. Behavioural analysis may be sufficient for Bee-Link without extracting firmware. Preserve the original unit and credentials; avoid unlocking operations that could erase them, and redact device keys, IMEI and identifiers from shared findings.
+
 ## Reddit and community
 
 [CAN bus decoded fully (almost)](https://www.reddit.com/r/Surron/comments/1w0zdwh/canbus_decoded_fully_almost/) contains claims of charger emulation, charge-port control, breakout prototypes and planned GitHub publication. Temperature identification and some faults remained unresolved. These are collaboration leads, not reviewed specifications.
