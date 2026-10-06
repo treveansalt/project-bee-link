@@ -84,6 +84,7 @@ The decoder should retain raw bytes alongside units, sample age, source variant 
 
 ## Research and known work
 
+- [Surron QL-TBOX-JM FCC filing](https://fccid.io/2A92B-QL-TBOX-JM) — public radio-certification record with manufacturer manual, internal PCB photographs and other exhibits. Useful for hardware investigation; not a firmware dump or verified pinout. Confirm the actual module model/revision before applying it.
 - [Kevin Graehl: Ultra Bee Live](https://kevingraehl.com/projects/ultra-bee-live/) — published battery dashboard; waiting for device data at review.
 - [Kevin Graehl: Surron Battery Reviver](https://kevingraehl.com/projects/surron-battery-reviver/) — author-described ESP32 diagnostic prototype and logging. Recovery/control is outside our initial scope.
 - [BraapZap CAN research](https://www.braapzap.com/post/surron-ultrabee-canbus) and [communications-port pinout](https://www.braapzap.com/post/surron-ultrabee-battery-com-port-pinout) — tentative protocol and connector leads.
