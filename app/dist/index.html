@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#172d2b"><title>Bee Link · Ultra Bee telemetry</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="#live"><span class="brand-mark">b<span>↗</span></span><span>BEE LINK<small>ULTRA BEE / LOCAL TELEMETRY</small></span></a>
+  <div class="bike-label"><span class="tiny">YOUR BIKE</span><strong>Surron Ultra Bee</strong><span id="variant-label">Demo specimen</span></div>
+  <nav aria-label="Main navigation">
+    <a href="#live" data-page="live"><span aria-hidden="true">◉</span>Overview</a>
+    <a href="#battery" data-page="battery"><span aria-hidden="true">▤</span>Battery</a>
+    <a href="#logs" data-page="logs"><span aria-hidden="true">↗</span>Rides & logs</a>
+    <a href="#signals" data-page="signals"><span aria-hidden="true">≋</span>Signal explorer</a>
+    <a href="#setup" data-page="setup"><span aria-hidden="true">⚙</span>Connection & setup</a>
+    <a href="#research" data-page="research"><span aria-hidden="true">◇</span>What’s possible</a>
+  </nav>
+  <div class="sidebar-bottom"><span class="small-dot"></span> Your bike. Your data.<p>ESP32 + CAN + GPS<br>Designed to work locally.</p><small>Independent project · v0.1</small></div>
+</aside>
+<main>
+  <header><div class="breadcrumb">WORKSPACE <span>/</span> <b id="page-name">Overview</b></div><div class="header-right"><span class="mode-pill" id="mode-pill">Demo · simulated</span><button id="mode-button" class="quiet">Connect logger ↗</button></div></header>
+  <div class="content">
+    <div class="title-row"><div><div class="eyebrow">LOCAL ACCESS. OWNER-HELD DATA.</div><h1 id="title">Know your Bee.</h1><p id="subtitle">A clearer view of your bike, one signal at a time.</p></div><button id="demo-toggle" class="secondary">Pause demo</button></div>
+    <div id="notice" role="status" class="notice">SIMULATED DATA <span>This is a working preview. No bike is connected and no CAN definitions are verified.</span></div>
+    <section id="page-live" class="page">
+      <div class="overview-grid">
+        <article class="card charge-card"><div class="card-heading"><h2>Battery charge</h2><span class="tag" id="soc-quality">SIMULATED</span></div><div class="charge-layout"><div class="gauge" id="gauge"><div><span id="soc-big">—</span><small>REPORTED CHARGE</small></div></div><div class="charge-copy"><span class="eyebrow">READY FOR THE NEXT RIDE</span><h3>Every ride<br>leaves a story.</h3><p>Capture the details.<br>Keep them yours.</p></div></div><div class="charge-footer"><span id="capture-status">Preview running</span><span id="last-update">—</span></div></article>
+        <article class="card gps-card"><div class="card-heading"><h2>Ride trace</h2><span class="tag">GPS</span></div><div id="route-preview" class="route-preview"></div><div class="gps-footer"><div><span class="label">POSITION</span><strong id="gps-location">Waiting for a fix</strong></div><div><span class="label">FIX ACCURACY</span><strong id="gps-accuracy">—</strong></div></div><small class="muted">Local route sketch · no online map tiles</small></article>
+      </div>
+      <div id="metrics" class="metrics"></div>
+      <article class="card chart-card"><div class="card-heading"><div><h2>In the moment</h2><p class="muted">Most recent 120 samples · gaps are left visible</p></div><label class="select-label">Signal <select id="chart-signal"><option value="pack_current_a">Pack current · A</option><option value="speed_kmh">Speed · km/h</option><option value="pack_voltage_v">Pack voltage · V</option><option value="battery_temp_c">Battery temperature · °C</option><option value="soc_pct">Charge · %</option></select></label></div><div id="live-chart" class="chart"></div></article>
+      <div class="footnote"><span class="small-dot"></span><span id="data-footnote">Demo values are illustrations, not measurements or battery safety advice.</span><a href="#signals">Inspect signal evidence ↗</a></div>
+    </section>
+    <section id="page-battery" class="page" hidden>
+      <div class="section-intro"><h2>The pack, in detail.</h2><p>Reported readings and cell-group differences. A charge percentage is not a capacity or health test.</p></div>
+      <div id="battery-metrics" class="metrics"></div>
+      <article class="card"><div class="card-heading"><div><h2>Cell groups</h2><p class="muted">Only groups present in the stream are shown. Group count depends on the battery.</p></div><span class="tag" id="cell-spread">—</span></div><div id="cells" class="cells"></div><p class="muted">The difference is calculated only from fresh groups sampled together. No pass/fail threshold is assumed.</p></article>
+      <article class="card" style="margin-top:20px"><h2>Useful trends to keep</h2><div class="feature-grid"><div><h3>Charge & storage</h3><p>Track reported charge and temperature over time. Sleep can leave long gaps in the record.</p></div><div><h3>Under load</h3><p>Compare voltage sag and temperature between similar rides once current scaling and sign are validated.</p></div><div><h3>Cell-group spread</h3><p>Look for repeatable changes under comparable load. Cell voltages alone cannot establish safe charging.</p></div></div></article>
+    </section>
+    <section id="page-logs" class="page" hidden>
+      <div class="log-toolbar"><div><h2>Keep the whole story.</h2><p class="muted" id="log-explanation">Record a demo session or replay a saved JSON / JSONL capture.</p></div><div class="button-row"><button id="record-button" class="primary">Record demo</button><button id="import-button" class="secondary">Import capture</button><input id="import-file" type="file" accept=".json,.jsonl,.ndjson" hidden></div></div>
+      <div class="log-summary" id="log-summary"></div>
+      <article class="card"><div class="card-heading"><h2>Capture library</h2><button id="refresh-logs" class="quiet">Refresh ↻</button></div><div id="log-list"></div><div class="button-row" style="margin-top:20px"><button id="export-json" class="secondary">Export JSONL</button><button id="export-csv" class="secondary">Export readings CSV</button><button id="load-history" class="quiet">Load older samples</button></div><p class="muted" id="export-note">Exports contain sample time, source and confidence. Demo exports are labelled simulated.</p></article>
+      <article class="card" style="margin-top:20px"><div class="card-heading"><h2>Route replay</h2><span class="tag" id="replay-caption">CURRENT STREAM</span></div><div id="replay-route" class="route-large"></div><label class="replay-label">Replay position <input id="replay-position" type="range" min="0" max="0" value="0" aria-label="Replay position"><span id="replay-time">No position samples</span></label></article>
+    </section>
+    <section id="page-signals" class="page" hidden>
+      <div class="section-intro"><h2>Show the evidence.</h2><p>Missing values stay missing. Each reading keeps its own timestamp and decoding status.</p></div>
+      <article class="card"><div class="card-heading"><h2>Decoded signals</h2><label>Filter <input id="signal-filter" type="search" placeholder="Voltage, GPS, temperature…"></label></div><div class="table-wrap"><table><thead><tr><th>Signal</th><th>Value</th><th>Age</th><th>Evidence status</th><th>Source / decoder</th></tr></thead><tbody id="signal-table"></tbody></table></div></article>
+      <article class="card" style="margin-top:20px"><div class="card-heading"><div><h2>Raw CAN frames</h2><p class="muted">Most recent 50 frames in loaded history · standard / extended identifiers stay distinct</p></div></div><div class="table-wrap"><table><thead><tr><th>Timestamp</th><th>ID</th><th>Format</th><th>DLC</th><th>Payload</th></tr></thead><tbody id="frame-table"></tbody></table></div><p class="muted">The supplied decoder has no CAN mappings. Unknown frames are still preserved in the local database.</p></article>
+    </section>
+    <section id="page-setup" class="page" hidden>
+      <div class="section-intro"><h2>From the trail to home.</h2><p>The ESP32 captures CAN and GPS. The local logger stores it. Home Assistant makes it useful around the house.</p></div>
+      <article class="card"><h2>Connect to your local logger</h2><p>The dashboard and API run on the same device. Start the included server, then open this dashboard at its local address.</p><div class="setup-form"><label>Bike identifier<input id="device-id" value="ultra-bee" maxlength="128"></label><label>Access token (if enabled)<input id="access-token" type="password" autocomplete="off" placeholder="Kept in this tab’s memory only"></label><button id="connect-button" class="primary">Connect</button><button id="start-demo" class="secondary">Use demo data</button></div><p id="connection-message" role="status" class="muted">No bike connection yet. Demo mode is available without hardware.</p><p class="muted">Phone access: open the logger’s LAN address on your home Wi-Fi. No vendor account or external scripts are needed.</p></article>
+      <div class="pipeline"><div><b>01 / CAPTURE</b><h3>On the bike</h3><p>ESP32 + protected CAN interface, GPS receiver and microSD. Silent CAN capture; no vehicle-control endpoint.</p><span>HARDWARE / FIRMWARE PENDING</span></div><div><b>02 / PRESERVE</b><h3>Locally, first</h3><p>Append to SD before upload. Batch to the receiver over Wi-Fi and retry until each sequence is acknowledged.</p><span>RECEIVER IMPLEMENTED</span></div><div><b>03 / UNDERSTAND</b><h3>At home</h3><p>SQLite history, browser dashboard and optional MQTT sensors for Home Assistant. GPS location stays local.</p><span>DASHBOARD + BRIDGE IMPLEMENTED</span></div></div>
+      <article class="card"><h2>Home Assistant</h2><p>Run the included MQTT bridge beside the logger and connect it to your Mosquitto broker. Discovery adds verified sensors for charge, voltage, current, speed and temperature. Provisional readings are excluded by default. The bridge sends fresh readings once per second, with expiry and device availability.</p><p>Use Home Assistant for storage reminders and missed-update alerts. Keep high-rate raw captures in the bike’s SD log and the logger database.</p><a href="guide.html" class="text-link">Open the setup and API guide ↗</a></article>
+    </section>
+    <section id="page-research" class="page" hidden>
+      <div class="section-intro"><h2>What the signals can tell us.</h2><p>Research reviewed 10 October 2026. Documented app features are not a guarantee for every bike or region.</p></div>
+      <article class="card"><div class="card-heading"><h2>Official app → local possibilities</h2><span class="tag">RESEARCH / INFERENCE</span></div><div class="table-wrap"><table class="capability-table"><thead><tr><th>Function</th><th>Evidence</th><th>Local implementation</th></tr></thead><tbody>
+      <tr><td>Battery status</td><td>Official app listing</td><td>CAN candidate: charge, pack voltage/current, temperatures. Exact fields and passive availability need validation.</td></tr>
+      <tr><td>Location & ride trajectory</td><td>Official app listing; T-box GNSS</td><td>ESP32 GPS supplies coordinates. Combine with timestamps and CAN readings for route replay.</td></tr>
+      <tr><td>Safety alerts</td><td>App listing; T-box vibration / power alerts</td><td>Data-gap and reported battery trends are possible. Motion alarms need an IMU / ignition sensing; remote alerts need connectivity.</td></tr>
+      <tr><td>Fault diagnosis</td><td>Official app listing; T-box UDS support</td><td>Record broadcast faults if observed. Active diagnostic queries and service access require a separate verified protocol.</td></tr>
+      <tr><td>OTA updates</td><td>App Store release notes; T-box manual</td><td>Not implemented. CAN capture cannot recreate signed vendor updates or programming workflows.</td></tr>
+      <tr><td>Ride & charge history</td><td>App advertises ride trajectory; storage depth unknown</td><td>Owner-held SD + SQLite logs can retain new captures for as long as storage permits. They cannot recover unrecorded past rides.</td></tr>
+      <tr><td>Cell detail & energy use</td><td>Third-party prototype reports; inference</td><td>Potentially beyond the OEM UI. Requires validated cell decoding and current sign; usable capacity is not inferred from SOC.</td></tr>
+      <tr><td>Remote theft tracking</td><td>T-box includes cellular + GNSS</td><td>GPS gives position; Wi-Fi alone only uploads when reachable. Away-from-home tracking needs LTE or a connected phone.</td></tr>
+      </tbody></table></div></article>
+      <article class="card" style="margin-top:20px"><h2>A better log, without assuming an empty bike.</h2><p>The OEM app advertises ride trajectories, and the T-box describes cloud upload. We cannot establish its retention period, sample rate, export options or on-device log depth from these sources. Bee Link records new data independently rather than relying on undocumented vendor history.</p><p>No pin assignment, bitrate, CAN ID or signal scale is supplied as a verified Ultra Bee definition.</p><div class="source-links"><a href="https://play.google.com/store/apps/details?id=com.surron.oversea" target="_blank" rel="noreferrer">Official Android listing ↗</a><a href="https://apps.apple.com/gb/app/surron/id6450043341" target="_blank" rel="noreferrer">Official iPhone listing ↗</a><a href="https://device.report/manual/9999122" target="_blank" rel="noreferrer">Manufacturer T-box manual ↗</a><a href="https://www.home-assistant.io/integrations/mqtt/" target="_blank" rel="noreferrer">Home Assistant MQTT ↗</a></div></article>
+    </section>
+  </div><footer>BEE LINK <span>Independent Ultra Bee telemetry · Receive-only design · v0.1</span></footer>
+</main><div id="toast" role="status" hidden></div><script src="app.js" type="module"></script>
+</body></html>

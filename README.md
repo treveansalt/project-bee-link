@@ -4,9 +4,28 @@
 
 Bee-Link is a proposed community project to document the Ultra Bee's electronic interfaces and build a local CAN telemetry gateway with a phone-friendly dashboard. Its purpose is to reduce dependence on the Surron app, accounts and cloud services for information owners need to understand and maintain their bikes.
 
-**Status: research and project definition — 6 October 2026.** This repository contains documentation, not working firmware, a validated pinout or an installation kit. No bike variant has been validated by Bee-Link. This is an independent project with no affiliation to Surron or the researchers referenced below.
+**Status: application prototype and hardware research — 10 October 2026.** This repository now includes a working local dashboard, telemetry receiver and optional Home Assistant MQTT bridge alongside the research documentation. On-bike ESP32 firmware, electrical connections and CAN signal definitions remain unvalidated; this is not an installation kit. No bike variant has been validated by Bee-Link. This is an independent project with no affiliation to Surron or the researchers referenced below.
 
 **Ultra Bee only.** Light Bee, Light Bee X/LBX, Light Bee 2 and Hyper Bee models are outside this project's scope. References to those platforms are background research only.
+
+## Application prototype
+
+The new **[app/ section](app/README.md)** contains the first Bee Link application release: a phone-friendly local web dashboard, persistent raw/decoded capture logging, GPS route replay and an optional Home Assistant integration through MQTT. It is ready to accept future ESP32 + GPS captures through a documented API, and has a clearly labelled simulation for development without hardware.
+
+| Area | What is included |
+| --- | --- |
+| [Dashboard and preview](app/README.md#try-it) | Battery, temperatures, speed, dynamic cell groups, GPS routes, missing/stale states and signal evidence |
+| [Local receiver and API](app/docs/api.md) | SQLite storage, raw CAN preservation, acknowledged batch uploads, duplicate protection and JSONL/CSV exports |
+| [Home Assistant](app/README.md#home-assistant) | Optional MQTT discovery bridge for fresh eligible sensors; GPS publication is opt-in |
+| [OEM functionality research](app/docs/research.md) | Official app feature inventory, realistic local possibilities and remaining unknowns |
+| [ESP32 design contract](app/docs/esp32.md) | Intended GPS/microSD capture architecture and offline upload/retry behavior; board firmware is pending |
+| [Validation](app/VALIDATION.md) | Ten passing automated tests, browser checks and explicit hardware/integration limits |
+
+**Try it:** download the repository, open the `app` folder, and double-click `OPEN-BEE-LINK.html` for the simulated dashboard. On Windows, `START-BEE-LINK.cmd` starts the local receiver and opens its dashboard (Python 3.11+ or the supported bundled runtime required). See the [app setup guide](app/README.md) for other platforms, storage and Home Assistant configuration.
+
+The recommended logging path is **ESP32 + GPS + microSD → local SQLite archive → optional Home Assistant sensors**. Recording on the bike is needed to preserve rides away from home Wi-Fi. The software does not transmit on CAN, and this release supplies no verified Ultra Bee identifiers, pinout or bitrate.
+
+![Bee Link dashboard with simulated readings](app/preview.jpg)
 
 ## Why Bee-Link?
 

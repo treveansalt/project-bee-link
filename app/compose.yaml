@@ -1,0 +1,12 @@
+services:
+  logger:
+    build: .
+    ports:
+      - "8765:8765"
+    environment:
+      BEELINK_TOKEN: ${BEELINK_TOKEN:?Set a random token of at least 24 characters}
+    volumes:
+      - beelink-data:/app/data
+    restart: unless-stopped
+volumes:
+  beelink-data:
