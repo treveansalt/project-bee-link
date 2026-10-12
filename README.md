@@ -8,6 +8,10 @@ Bee-Link is a proposed community project to document the Ultra Bee's electronic 
 
 **Ultra Bee only.** Light Bee, Light Bee X/LBX, Light Bee 2 and Hyper Bee models are outside this project's scope. References to those platforms are background research only.
 
+## Documentation
+
+Start with the [Bee Link wiki](https://github.com/treveansalt/project-bee-link/wiki) for setup, dashboard use, capture logging and backups, Home Assistant, the API, hardware plans and troubleshooting. The wiki distinguishes working software from hardware and CAN definitions that still need validation.
+
 ## Application prototype
 
 The **[app/ section](app/README.md)** contains the Bee Link application prototype: a phone-friendly local web dashboard, persistent raw/decoded capture logging, GPS route replay and an optional Home Assistant integration through MQTT. It is ready to accept future ESP32 + GPS captures through a documented API, and has a clearly labelled simulation for development without hardware.
