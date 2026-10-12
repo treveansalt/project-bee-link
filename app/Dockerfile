@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 WORKDIR /app
-COPY server.py protocol.json ./
+COPY server.py capture_summary.py protocol.json ./
 COPY dist ./dist
 RUN useradd --uid 10001 --create-home beelink && mkdir /app/data && chown beelink /app/data
 USER beelink

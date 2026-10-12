@@ -21,6 +21,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
+from capture_summary import capture_summaries
 
 ROOT = Path(__file__).resolve().parent
 SIGNALS = {
@@ -231,6 +232,11 @@ class Store:
         with self.db() as db:
             return [dict(x) for x in db.execute("SELECT device_id,COUNT(*) samples,MAX(timestamp) last_seen FROM samples GROUP BY device_id ORDER BY device_id")]
 
+    def captures(self, device, limit=50):
+        """Describe stored sessions without reading their raw payloads."""
+        with self.db() as db:
+            return capture_summaries(db, device, limit)
+
     def snapshot(self, device):
         with self.db() as db:
             latest = db.execute("SELECT payload,received_at FROM samples WHERE device_id=? ORDER BY timestamp DESC,row_id DESC LIMIT 1", (device,)).fetchone()
@@ -327,6 +333,9 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             if parsed.path == "/api/devices":
                 return self.reply({"devices": self.server.store.devices()})
+            if parsed.path == "/api/captures":
+                limit = min(100, max(1, int(q.get("limit", ["50"])[0])))
+                return self.reply({"device_id": device, "captures": self.server.store.captures(device, limit), "limit": limit})
             if parsed.path == "/api/snapshot":
                 return self.reply(self.server.store.snapshot(device))
             if parsed.path == "/api/history":

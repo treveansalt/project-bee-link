@@ -17,6 +17,8 @@ let mode = 'demo', page = 'live', running = true, tick = 0, history = [], latest
 let recording = null, selectedLog = null, replayIndex = null, nextBefore = null, sampleCount = 0, variant = 'Demo specimen';
 let connectionError = '', lastPoll = 0, pollBusy = false, connectEpoch = 0, toastTimer, demoStart = Date.now();
 let logs = [];
+let captureSummaries = [], captureError = '', captureBusy = false;
+let captureRefreshPending = false, lastCaptureRefresh = 0;
 try { logs = JSON.parse(localStorage.getItem('beelink-demo-logs-v1') || '[]'); if (!Array.isArray(logs)) logs = []; } catch { logs = []; }
 
 function toast(msg) { $('toast').textContent=msg; $('toast').hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{$('toast').hidden=true;},5000); }
@@ -143,6 +145,10 @@ function stats(samples) {
   return {count:samples.length,duration:Math.max(0,(Date.parse(samples.at(-1).timestamp)-Date.parse(samples[0].timestamp))/1000),distance:haveDistance?distance:null};
 }
 function renderLogs() {
+  $('saved-captures').hidden=mode!=='live';
+  $('refresh-captures').disabled=captureBusy;
+  $('saved-capture-status').textContent=captureError ? `Saved captures unavailable: ${captureError}` : captureBusy ? 'Loading saved captures…' : `${captureSummaries.length} recent capture${captureSummaries.length===1?'':'s'} · times shown in your local timezone`;
+  $('capture-table').innerHTML=captureError ? '<tr><td colspan="6">Could not read the saved capture overview. Refresh to retry; stored logs remain available through export.</td></tr>' : captureSummaries.map(c=>`<tr><td class="monospace">${esc(c.capture_id)}</td><td>${esc(new Date(c.first_timestamp).toLocaleString())}</td><td>${esc(new Date(c.last_timestamp).toLocaleString())}</td><td>${(c.duration_seconds/60).toFixed(1)} min</td><td>${Number(c.sample_count).toLocaleString()}</td><td>${Number(c.missing_sequences).toLocaleString()}</td></tr>`).join('') || '<tr><td colspan="6">No saved captures for this device yet.</td></tr>';
   $('record-button').hidden=mode!=='demo';$('record-button').textContent=recording?'Stop recording':'Record demo';
   $('log-explanation').textContent=mode==='live'?'The receiver writes every accepted sample to SQLite. The ESP32 should keep its own SD log while away from Wi-Fi.':'Record a demo session or replay a saved JSON / JSONL capture.';
   $('load-history').hidden=mode!=='live';$('load-history').disabled=!nextBefore;
@@ -162,6 +168,16 @@ function stopRecord(){if(!recording)return;const r=recording;recording=null;if(r
 function startDemo(){stopRecord();connectEpoch++;mode='demo';running=true;connectionError='';selectedLog=null;replayIndex=null;seedDemo();render();$('connection-message').textContent='Using simulated data. No samples are sent to the real logger.';}
 function selectCapture(log){stopRecord();connectEpoch++;history=[...log.samples].sort((a,b)=>Date.parse(a.timestamp)-Date.parse(b.timestamp));selectedLog={...log,samples:history};mode='replay';running=false;latest={};history.forEach(applySample);variant=history.at(-1)?.variant||'Imported capture';replayIndex=null;render();}
 async function api(path) {const response=await fetch(path,{headers:token?{Authorization:`Bearer ${token}`}:{},cache:'no-store',signal:AbortSignal.timeout(6000)});if(!response.ok){const err=await response.json().catch(()=>({}));throw new Error(err.error||`Logger returned ${response.status}`);}return response;}
+async function refreshCaptures(){
+  if(mode!=='live'||captureBusy)return;
+  captureBusy=true;captureRefreshPending=false;lastCaptureRefresh=Date.now();const epoch=connectEpoch;render();
+  try{const result=await(await api(`/api/captures?device=${encodeURIComponent(device)}&limit=50`)).json();
+    if(epoch!==connectEpoch)return;
+    if(!Array.isArray(result.captures))throw new Error('Receiver does not support saved capture summaries.');
+    captureSummaries=result.captures;captureError='';
+  }catch(e){if(epoch===connectEpoch){captureError=e.message;captureSummaries=[];}}
+  finally{captureBusy=false;if(epoch===connectEpoch)render();else if(mode==='live')refreshCaptures();}
+}
 async function connect(){
   stopRecord();const epoch=++connectEpoch;token=$('access-token').value;$('access-token').value='';device=$('device-id').value.trim()||'ultra-bee';
   $('connection-message').textContent='Connecting…';$('connect-button').disabled=true;
@@ -172,7 +188,7 @@ async function connect(){
     if(!snap.signals||!Array.isArray(hist.samples))throw new Error('This page is not served by the Bee Link local receiver.');
     mode='live';selectedLog=null;running=false;latest=snap.signals;sampleCount=snap.sample_count;variant=snap.variant;history=hist.samples.sort((a,b)=>Date.parse(a.timestamp)-Date.parse(b.timestamp));nextBefore=hist.next_before;connectionError='';lastPoll=Date.now();
     $('connection-message').textContent=`Connected. ${sampleCount} samples stored for ${device}. Waiting for fresh CAN / GPS if the bike is offline.`;
-    toast('Local logger connected.');render();
+    captureSummaries=[];captureError='';toast('Local logger connected.');render();refreshCaptures();
   }catch(e){if(epoch===connectEpoch){$('connection-message').textContent=`Connection failed: ${e.message} Start server.py and open its local URL. Current preview remains available.`;toast('Could not connect to the local receiver.');}}
   finally{$('connect-button').disabled=false;}
 }
@@ -180,7 +196,10 @@ async function poll(){
   if(mode!=='live'||pollBusy)return;pollBusy=true;const epoch=connectEpoch;
   try{const snap=await(await api(`/api/snapshot?device=${encodeURIComponent(device)}`)).json();if(epoch!==connectEpoch)return;
     if(snap.sample_count!==sampleCount){const hist=await(await api(`/api/history?device=${encodeURIComponent(device)}&limit=1000`)).json();if(epoch!==connectEpoch)return;history=hist.samples.sort((a,b)=>Date.parse(a.timestamp)-Date.parse(b.timestamp));nextBefore=hist.next_before;}
+    const capturesChanged=snap.sample_count!==sampleCount;
     latest=snap.signals;sampleCount=snap.sample_count;variant=snap.variant;connectionError='';
+    if(capturesChanged)captureRefreshPending=true;
+    if(captureRefreshPending&&Date.now()-lastCaptureRefresh>=15000)refreshCaptures();
   }catch(e){if(epoch===connectEpoch)connectionError=`Logger unavailable: ${e.message}. Readings age naturally; logging depends on the receiver staying running.`;}finally{pollBusy=false;if(epoch===connectEpoch)render();}
 }
 function validateImported(s){
@@ -212,6 +231,7 @@ async function exportData(format){try{
 
 $('mode-button').onclick=()=>{location.hash='setup';};$('demo-toggle').onclick=()=>{running=!running;render();};$('start-demo').onclick=startDemo;$('connect-button').onclick=connect;
 $('record-button').onclick=()=>{if(recording)stopRecord();else{recording={id:`demo-log-${Date.now()}`,name:`Demo ride · ${new Date().toLocaleString()}`,samples:[]};selectedLog=null;running=true;toast('Recording simulated samples in this browser.');}render();};
+$('refresh-captures').onclick=refreshCaptures;
 $('import-button').onclick=()=>{$('import-file').click();};$('import-file').onchange=e=>{importCapture(e.target.files[0]);};
 $('export-json').onclick=()=>{exportData('jsonl');};$('export-csv').onclick=()=>{exportData('csv');};$('chart-signal').onchange=chart;$('signal-filter').oninput=renderSignals;
 $('replay-position').oninput=e=>{replayIndex=Number(e.target.value);if(mode==='replay'){const positions=logData().filter(s=>s.signals?.latitude&&s.signals?.longitude);const until=Date.parse(positions[replayIndex]?.timestamp);latest={};history.filter(s=>Date.parse(s.timestamp)<=until).forEach(applySample);}renderLogs();};$('refresh-logs').onclick=()=>{mode==='live'?poll():renderLogs();};

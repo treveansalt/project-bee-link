@@ -126,6 +126,29 @@ class HttpTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError) as ctx:self.request("/api/ingest",{"samples":[fixture()]},origin="http://foreign.example")
         self.assertEqual(ctx.exception.code,403)
 
+    def test_capture_overview_is_authenticated_and_device_scoped(self):
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self.request('/api/captures?device=test-bike',auth=False)
+        self.assertEqual(ctx.exception.code,401)
+        self.server.store.ingest([fixture(sequence=10),fixture(sequence=12)])
+        other=fixture();other['device_id']='other-bike'
+        self.server.store.ingest([other])
+        with self.request('/api/captures?device=test-bike&limit=999') as r:
+            result=json.load(r)
+        self.assertEqual(result['limit'],100)
+        self.assertEqual(len(result['captures']),1)
+        capture=result['captures'][0]
+        self.assertEqual(capture['sample_count'],2)
+        self.assertEqual(capture['missing_sequences'],1)
+        with self.request('/api/captures?device=unknown') as r:
+            self.assertEqual(json.load(r)['captures'],[])
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self.request('/api/captures?limit=invalid')
+        self.assertEqual(ctx.exception.code,400)
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self.request('/api/captures',origin='http://foreign.example')
+        self.assertEqual(ctx.exception.code,403)
+
 
 class MqttTests(unittest.TestCase):
     def test_freshness_provenance_and_gps_opt_in(self):

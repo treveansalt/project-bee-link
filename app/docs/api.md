@@ -2,7 +2,15 @@
 
 All assets and endpoints are on the same local origin. Authentication, when enabled, is `Authorization: Bearer <BEELINK_TOKEN>` for every `/api/` request. Cross-origin browser requests are disabled. Never put the token in a URL. There is no CAN control API.
 
-## Ingest
+## Saved capture overview
+
+`GET /api/captures?device=ultra-bee&limit=50` uses the same authentication and origin rules as other API endpoints. Returns `device_id`, `limit` and `captures`. Limit defaults to 50, is clamped to 1–100, and a non-integer query returns HTTP 400.
+
+Each capture has `capture_id`, `sample_count`, `first_timestamp`, `last_timestamp`, `duration_seconds`, `first_sequence`, `last_sequence` and `missing_sequences`. Timestamps are UTC; the dashboard displays local times. Results are grouped within the selected device and ordered by last timestamp descending, capture ID ascending for ties. The query aggregates stored samples without loading payloads or changing the database.
+
+Duration is the elapsed time between the earliest and latest uploaded timestamps, including stops and gaps. Missing sequences are `max(0, last_sequence - first_sequence + 1 - sample_count)`: only holes in the observed range. They neither count missing samples before/after that range nor establish CAN packet loss. Producers should use a unique capture ID for each sequence namespace and increment sequence for every sample.
+
+## Ingest payload
 
 `POST /api/ingest` with a JSON object containing `samples`: 1–200 samples, up to 2 MB per request. All samples validate first and commit in one transaction. An error stores none of that batch. Hardware retries must preserve immutable original sample content.
 

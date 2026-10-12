@@ -2,7 +2,7 @@
 
 A working, local web dashboard and persistent telemetry receiver for the **Surron Ultra Bee**, ready for a future **ESP32 + GPS + microSD** gateway.
 
-Developed 10 October 2026. Independent project; no bike or CAN mapping has been validated. This is working application software, not a finished on-bike installation. The original project research remains in the repository root docs/ section.
+Developed 10 October 2026; capture overview added 12 October 2026. Independent project; no bike or CAN mapping has been validated. This is working application software, not a finished on-bike installation. The original project research remains in the repository root docs/ section.
 
 ## Explore this section
 
@@ -10,6 +10,8 @@ Developed 10 October 2026. Independent project; no bike or CAN mapping has been 
 | --- | --- |
 | [OPEN-BEE-LINK.html](OPEN-BEE-LINK.html) | Self-contained offline simulated preview; download before opening in a browser |
 | [dist/](dist/) | Dashboard source, styling, browser behavior and setup guide |
+| [capture_summary.py](capture_summary.py) | Stored-capture summaries and sequence counts |
+| [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md) | Optional local model development workflow |
 | [server.py](server.py) | Local HTTP receiver, SQLite archive, optional decoder and export API |
 | [mqtt_bridge.py](mqtt_bridge.py) | Optional Home Assistant MQTT discovery bridge |
 | [protocol.json](protocol.json) | Empty, intentionally unconfigured CAN profile |
@@ -39,6 +41,7 @@ Choose **Connection & setup → Connect** to read the local receiver. With no ga
 
 ## What is implemented
 
+- Saved capture overview in **Rides & logs** when connected to the receiver: latest 50 capture IDs, local start/end times, capture span, sample count and missing sequence numbers. Refresh manually or automatically after uploads (coalesced to at most once every 15 seconds). The overview uses all stored samples, including older ones outside the browser's loaded history. Spans include stops and gaps; sequence holes do not prove lost CAN frames.
 - Phone-friendly browser dashboard, fully local assets with no CDN or vendor account.
 - Pack/SOC/current/speed/temperature/odometer panels, dynamic cell groups and evidence inspection.
 - GPS route sketches and replay slider, without internet map services.

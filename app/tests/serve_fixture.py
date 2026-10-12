@@ -10,7 +10,7 @@ from server import Handler, Store, ThreadingHTTPServer
 
 with tempfile.TemporaryDirectory() as temp:
     store = Store(Path(temp) / "ui-fixture.sqlite")
-    for i in range(3):
+    for i in [0,1,3]:
         timestamp = (datetime.now(timezone.utc)-timedelta(minutes=2,seconds=2-i)).isoformat()
         def signal(value):
             return {"value":value,"confidence":"provisional","evidence":"Synthetic browser test fixture; not bike evidence"}
@@ -18,6 +18,10 @@ with tempfile.TemporaryDirectory() as temp:
                       "sequence":i,"timestamp":timestamp,"source":"mixed","variant":"SYNTHETIC UI TEST",
                       "decoder_version":"test-only","signals":{"pack_voltage_v":signal(72+i/10),"latitude":signal(51.45+i/1000),
                       "longitude":signal(-0.55+i/1000)},"frames":[{"id":0x321,"extended":False,"dlc":2,"data":"0102"}]}])
+    store.ingest([{"schema_version":1,"device_id":"test-fixture","capture_id":"earlier-session",
+                  "sequence":10,"timestamp":(datetime.now(timezone.utc)-timedelta(hours=1)).isoformat(),
+                  "source":"can","variant":"SYNTHETIC UI TEST","decoder_version":"test-only",
+                  "signals":{"pack_voltage_v":signal(72)},"frames":[]}])
     srv=ThreadingHTTPServer(("127.0.0.1",8766),Handler);srv.store=store;srv.token=""
     print("Disposable browser test at http://127.0.0.1:8766; use device test-fixture",flush=True)
     try:srv.serve_forever()
