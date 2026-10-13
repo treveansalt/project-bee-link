@@ -39,6 +39,10 @@ Do not delete uploaded originals automatically in the pilot. Add explicit export
 
 Local access while riding away from home can eventually use an ESP32 access point serving the same static UI or a local transport. That is **not implemented** in this release; this receiver runs on a PC/Pi/server and firmware would need its own compatible API/storage layer. Wi-Fi AP and home-client transitions, SD access contention and power budget require a separate firmware design. No BLE, Web Bluetooth or phone background recording is currently implemented.
 
+## Optional on-bike MeshCore module
+
+The intended radio path is **Bee-Link ESP32 → connected MeshCore-compatible radio → private MeshCore channel**, independent of home Wi-Fi. See the [clarified MeshCore architecture](meshcore.md#intended-bike-installation--clarified-13-october-2026). Default to disabled, offer separate GPS opt-in and a 15-minute interval with jitter, and keep radio work out of the CAN callback. Failures must not block CAN/GPS logging or replay a backlog. Identify whether the radio is a separate companion MCU or a bare transceiver before choosing the firmware interface. This board integration is not implemented by the existing Python receiver bridge.
+
 ## Power and parked bike behavior
 
 A switched supply can miss parked/charging data. Permanent power can drain the battery. GPS, Wi-Fi and SD add power consumption. Measure ignition transitions, bike sleep, quiescent drain and transceiver behavior while unpowered before permanent fitment. A powered logger cannot force sleeping BMS/ECUs to broadcast without active requests; this passive release must accept gaps.

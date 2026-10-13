@@ -2,6 +2,29 @@
 
 An experimental companion-radio bridge for **Surron Ultra Bee only**. It sends a small text summary of fresh battery state, speed and optionally GPS. It does not control the bike, replace its T-box, or implement MeshCore firmware on the ESP32.
 
+## Intended bike installation — clarified 13 October 2026
+
+The owner intends the **on-bike Bee-Link ESP32 to have a connected MeshCore-compatible radio**, publishing to **a private MeshCore channel**. A home receiver is not part of the intended radio path. The Python bridge below is an auxiliary prototype, not the implementation of that on-bike requirement.
+
+```mermaid
+flowchart LR
+  C[Ultra Bee listen-only CAN] --> E[Bee-Link ESP32]
+  G[GPS] --> E
+  E --> S[Local SD log]
+  E --> R[Connected radio]
+  R --> P[Private MeshCore channel]
+  E -. optional Wi-Fi archive upload .-> H[Home receiver]
+```
+
+The firmware must support user enable/disable and separate GPS opt-in, a default 15-minute interval with jitter, no catch-up backlog, and fresh verified readings. Local capture must continue if the mesh is unavailable or disabled. The dashboard's eventual on-bike controls must operate the ESP32 settings; the current Python receiver controls do not do that. Private channel configuration belongs on the transmitting device, with no channel secret in public source or telemetry messages. Coverage and recipient availability determine reception; this is not guaranteed tracking.
+
+There are two materially different radio interfaces:
+
+- **Separate MeshCore companion node:** the ESP32 talks to an MCU running MeshCore companion firmware through a supported companion transport. This avoids integrating the mesh stack into the CAN logger; exact wired serial framing, firmware build, voltage levels and pin support need validation.
+- **Bare LoRa transceiver attached to the ESP32:** the Bee-Link firmware must integrate the MeshCore stack, supported radio driver and board configuration. A LoRa chip does not run MeshCore by itself. This requires coexistence testing with CAN, GPS and SD tasks, plus RAM, SPI/pin and power-budget checks.
+
+The [official MeshCore firmware repository](https://github.com/meshcore-dev/MeshCore) and [companion protocol documentation](https://docs.meshcore.io/companion_protocol/) are the starting references. Board model, radio module and whether it runs its own MeshCore firmware remain unspecified. No pin assignments, board compatibility or working on-bike firmware are claimed yet.
+
 ## What works in this prototype
 
 The local Bee-Link receiver has a background scheduler and dashboard controls under **Connection & setup → MeshCore**. The module is disabled on every receiver startup. Location sharing is separately disabled. Enabling schedules the first attempt after the selected interval, initially 15 minutes, plus 0–60 seconds of jitter. There is no immediate send, catch-up queue or application message retry. Intervals from 15 minutes to 24 hours are supported.
