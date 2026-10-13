@@ -73,10 +73,10 @@ function route(points,target,index=null) {
   const coords=xy.map(project),chosen=Math.min(coords.length-1,index??coords.length-1);
   let paths=[],segment=[];
   for(let i=0;i<coords.length;i++){if(i&&Date.parse(positions[i].timestamp)-Date.parse(positions[i-1].timestamp)>10000){paths.push(segment);segment=[];}segment.push(coords[i]);}paths.push(segment);
-  const path=paths.map(ps=>`<polyline points="${ps.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#ea763b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>`).join('');
+  const path=paths.map(ps=>`<polyline points="${ps.map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--chart)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>`).join('');
   const [cx,cy]=coords[chosen],[sx,sy]=coords[0];
   const simulated=positions.some(s=>s.source==='demo');
-  $(target).innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${simulated?'Simulated':'Recorded'} GPS route with start and selected position"><text x="25" y="27" fill="#829179" font-size="10" letter-spacing="2">${simulated?'SIMULATED ROUTE':'RECORDED GPS'}</text>${path}<circle cx="${sx}" cy="${sy}" r="6" fill="#19372e" stroke="white" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="11" fill="#ec7833" opacity=".16"/><circle cx="${cx}" cy="${cy}" r="5" fill="#ed7736" stroke="white" stroke-width="2"/></svg>`;
+  $(target).innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${simulated?'Simulated':'Recorded'} GPS route with start and selected position"><text x="25" y="27" fill="#626262" font-size="10" letter-spacing="2">${simulated?'SIMULATED ROUTE':'RECORDED GPS'}</text>${path}<circle cx="${sx}" cy="${sy}" r="6" fill="#111111" stroke="white" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="11" fill="var(--accent)" opacity=".16"/><circle cx="${cx}" cy="${cy}" r="5" fill="var(--accent)" stroke="white" stroke-width="2"/></svg>`;
   return positions;
 }
 function chart() {
@@ -87,10 +87,10 @@ function chart() {
   const values=points.map(p=>p[1]);let ymin=Math.min(...values),ymax=Math.max(...values);const pad=Math.max((ymax-ymin)*.15,.05);ymin-=pad;ymax+=pad;
   const pos=p=>[L+(p[0]-xmin)/Math.max(1,xmax-xmin)*(W-L-R),H-B-(p[1]-ymin)/(ymax-ymin)*(H-T-B)];
   let segments=[],seg=[];for(let i=0;i<points.length;i++){if(i&&points[i][0]-points[i-1][0]>STALE_MS){segments.push(seg);seg=[];}seg.push(pos(points[i]));}segments.push(seg);
-  const lines=segments.map(s=>`<polyline points="${s.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#d97c45" stroke-width="2.4"/>`).join('');
-  const grids=Array.from({length:4},(_,i)=>{const y=T+i*(H-T-B)/3,v=ymax-i*(ymax-ymin)/3;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#e5eadd" stroke-dasharray="3 4"/><text x="0" y="${y+3}" fill="#86927f" font-size="10">${v.toFixed(1)}</text>`;}).join('');
+  const lines=segments.map(s=>`<polyline points="${s.map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--chart)" stroke-width="2.4"/>`).join('');
+  const grids=Array.from({length:4},(_,i)=>{const y=T+i*(H-T-B)/3,v=ymax-i*(ymax-ymin)/3;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#deded6" stroke-dasharray="3 4"/><text x="0" y="${y+3}" fill="#626262" font-size="10">${v.toFixed(1)}</text>`;}).join('');
   const fmt=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  $('live-chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(label(key))} chart in ${esc(unit(key))}">${grids}${lines}<text x="${L}" y="${H-3}" fill="#8a9683" font-size="10">${fmt(xmin)}</text><text x="${W-R}" y="${H-3}" text-anchor="end" fill="#8a9683" font-size="10">${fmt(xmax)}</text></svg>`;
+  $('live-chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(label(key))} chart in ${esc(unit(key))}">${grids}${lines}<text x="${L}" y="${H-3}" fill="#626262" font-size="10">${fmt(xmin)}</text><text x="${W-R}" y="${H-3}" text-anchor="end" fill="#626262" font-size="10">${fmt(xmax)}</text></svg>`;
 }
 function renderCommon() {
   const simulatedReplay=mode==='replay'&&history.some(s=>s.source==='demo');

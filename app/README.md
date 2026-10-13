@@ -1,5 +1,7 @@
 # Bee Link app
 
+<img src="dist/assets/bee-link-logo.png" alt="Bee-Link" width="280">
+
 A working, local web dashboard and persistent telemetry receiver for the **Surron Ultra Bee**, ready for a future **ESP32 + GPS + microSD** gateway.
 
 Developed 10 October 2026; capture overview added 12 October 2026. Independent project; no bike or CAN mapping has been validated. This is working application software, not a finished on-bike installation. The original project research remains in the repository root docs/ section.

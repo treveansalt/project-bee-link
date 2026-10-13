@@ -1,5 +1,7 @@
 # Project Bee-Link
 
+<img src="assets/bee-link-logo.png" alt="Bee-Link — a bee towing an Ultra Bee motorbike" width="360">
+
 **Local access. Owner-held data. A longer useful life for the Surron Ultra Bee.**
 
 Bee-Link is a proposed community project to document the Ultra Bee's electronic interfaces and build a local CAN telemetry gateway with a phone-friendly dashboard. Its purpose is to reduce dependence on the Surron app, accounts and cloud services for information owners need to understand and maintain their bikes.
