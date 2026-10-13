@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
 from capture_summary import capture_summaries
+from meshcore_bridge import MeshCoreService
 
 ROOT = Path(__file__).resolve().parent
 SIGNALS = {
@@ -304,6 +305,17 @@ class Handler(SimpleHTTPRequestHandler):
             return self.reply({"error": "cross-origin requests are disabled"}, 403)
         if not self.authorized():
             return self.reply({"error": "valid bearer token required"}, 401)
+        if self.path == "/api/meshcore":
+            try:
+                size = int(self.headers.get("Content-Length", "0"))
+                if not 1 <= size <= 16384:
+                    return self.reply({"error": "invalid settings size"}, 413)
+                module = getattr(self.server, "meshcore", None)
+                if module is None:
+                    return self.reply({"error": "MeshCore module unavailable"}, 503)
+                return self.reply(module.configure(json.loads(self.rfile.read(size))))
+            except (ValueError, TypeError):
+                return self.reply({"error": "Invalid settings or radio not configured; check the MeshCore setup guide."}, 400)
         if self.path != "/api/ingest":
             return self.reply({"error": "endpoint not found"}, 404)
         try:
@@ -331,6 +343,11 @@ class Handler(SimpleHTTPRequestHandler):
         q = parse_qs(parsed.query)
         device = q.get("device", ["ultra-bee"])[0]
         try:
+            if parsed.path == "/api/meshcore":
+                module = getattr(self.server, "meshcore", None)
+                if module is None:
+                    return self.reply({"error": "MeshCore module unavailable"}, 503)
+                return self.reply(module.status())
             if parsed.path == "/api/devices":
                 return self.reply({"devices": self.server.store.devices()})
             if parsed.path == "/api/captures":
@@ -383,6 +400,8 @@ def main():
     srv = ThreadingHTTPServer((args.host, args.port), Handler)
     srv.token = token
     srv.store = Store(args.db, load_profile(args.profile))
+    srv.meshcore = MeshCoreService(srv.store)
+    srv.meshcore.start()
     print(f"Bee Link: http://{args.host}:{args.port} — local SQLite logging enabled", flush=True)
     if args.open_browser:
         import webbrowser
@@ -392,6 +411,7 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
+        srv.meshcore.close()
         srv.server_close()
 
 

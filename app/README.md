@@ -16,6 +16,7 @@ Developed 10 October 2026; capture overview added 12 October 2026. Independent p
 | [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md) | Optional local model development workflow |
 | [server.py](server.py) | Local HTTP receiver, SQLite archive, optional decoder and export API |
 | [mqtt_bridge.py](mqtt_bridge.py) | Optional Home Assistant MQTT discovery bridge |
+| [docs/meshcore.md](docs/meshcore.md) | Optional low-rate MeshCore companion bridge, setup and privacy controls |
 | [protocol.json](protocol.json) | Empty, intentionally unconfigured CAN profile |
 | [docs/research.md](docs/research.md) | Sourced app feature research and local-app scope |
 | [docs/api.md](docs/api.md) | Exact capture format and receiver integration contract |
@@ -55,6 +56,12 @@ Choose **Connection & setup → Connect** to read the local receiver. With no ga
 - Optional Home Assistant MQTT discovery bridge, freshness filtering, per-sensor expiry and availability.
 - SD-capture upload tool, Docker image and persistent-volume Compose configuration.
 - Automated receiver/API/decoder/MQTT-policy tests.
+
+## Optional MeshCore module
+
+**Connection & setup → MeshCore** provides enable/disable, an interval (default 15 minutes, minimum 15), and separate GPS-sharing opt-in. The receiver submits compact battery/speed/location text to a deliberately configured contact or private channel. It skips stale, missing and simulated readings and starts disabled after every restart. Install the optional dependency and configure the companion radio before enabling; see [MeshCore setup and limitations](docs/meshcore.md). Automated behaviour is tested with fake radios; over-air delivery remains untested. A home radio only sends live readings while the bike's data reaches home. Riding updates need a travelling receiver/radio or another live link.
+
+![MeshCore settings on the local receiver](meshcore-preview.jpg)
 
 ## What remains dependent on hardware
 

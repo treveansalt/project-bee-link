@@ -93,6 +93,10 @@ UI stale threshold is ten seconds per signal in live mode. Replay mode displays 
 | `GET /api/export.jsonl?device=ultra-bee` | Complete normalized raw/decoded capture, streamed in capture-time order. |
 | `GET /api/export.csv?device=ultra-bee` | Complete decoded numeric readings, metadata and evidence; does not include raw frames. |
 
+## Optional MeshCore controls
+
+`GET /api/meshcore` returns receiver module settings and status, readiness flags, seconds until the next attempt, and the last attempt/submission times. It omits radio addresses, destinations and message bodies. `POST /api/meshcore` accepts a JSON object containing any of `enabled` (boolean), `include_location` (boolean), `interval_minutes` (integer 15–1440), and `device` (device ID). Unknown keys are rejected. Authentication and same-origin restrictions match the existing API. Enabling requires the optional dependency and valid radio configuration. Settings changes reschedule the first attempt after a full interval plus jitter; POST does not transmit immediately. Settings reset on restart. See [MeshCore documentation](meshcore.md) for configuration, freshness, privacy and delivery semantics.
+
 ## Optional local decoder
 
 `protocol.json` is intentionally empty. `--profile <path>` loads an explicit version/variant-specific mapping of byte-aligned values. Rules require `key`, integer `id`, `extended`, `start_byte`, `length_bytes`, `byte_order` (`little` / `big`), `signed`, `scale`, `offset`, `confidence` and `evidence`. There are no supplied Ultra Bee rules.

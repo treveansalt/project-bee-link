@@ -1,5 +1,12 @@
 # Validation record — 10 October 2026
 
+## MeshCore module — 13 October 2026
+
+- All 36 automated tests pass on Windows, including 18 new formatter, scheduler, fake companion transport and authenticated control API checks. These cover no startup transmission, the first full-interval delay, failure throttling, no catch-up burst, cancellation before submission, strict settings, GPS opt-in, fresh coordinate pairing, per-field provenance, timestamp and numeric bounds, and radio acceptance versus delivery.
+- Eight reviewed formatter tests pass on the Mac's Python 3.9. The Mac-hosted LM Studio model drafted the formatter through OpenCode. Independent review found future-time, coordinate formatting, range-handling and Python 3.9 timestamp issues; the draft was repaired before integration. The slow model job was stopped after its draft was recovered; its unfinished test-generation step is not a successful validation result.
+- Desktop and 390px phone browser checks passed: disabled/unconfigured state, saving the interval, disabling the module, unique DOM IDs, no page-level horizontal overflow and no browser warnings/errors. JavaScript syntax check passed and the offline preview was rebuilt.
+- No real radio messages were sent. Companion serial/BLE/TCP hardware, recipient delivery and on-bike deployment remain untested. Optional Docker dependency installation was added but container execution was not tested. The package contains no new CAN identifiers or verified bike mappings.
+
 ## Completed
 
 - Python receiver and optional bridge compile; browser script syntax check passes.

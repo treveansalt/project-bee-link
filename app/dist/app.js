@@ -188,7 +188,7 @@ async function connect(){
     if(!snap.signals||!Array.isArray(hist.samples))throw new Error('This page is not served by the Bee Link local receiver.');
     mode='live';selectedLog=null;running=false;latest=snap.signals;sampleCount=snap.sample_count;variant=snap.variant;history=hist.samples.sort((a,b)=>Date.parse(a.timestamp)-Date.parse(b.timestamp));nextBefore=hist.next_before;connectionError='';lastPoll=Date.now();
     $('connection-message').textContent=`Connected. ${sampleCount} samples stored for ${device}. Waiting for fresh CAN / GPS if the bike is offline.`;
-    captureSummaries=[];captureError='';toast('Local logger connected.');render();refreshCaptures();
+    captureSummaries=[];captureError='';toast('Local logger connected.');render();refreshCaptures();refreshMeshCore();
   }catch(e){if(epoch===connectEpoch){$('connection-message').textContent=`Connection failed: ${e.message} Start server.py and open its local URL. Current preview remains available.`;toast('Could not connect to the local receiver.');}}
   finally{$('connect-button').disabled=false;}
 }
@@ -242,3 +242,33 @@ setInterval(()=>{
   if(mode==='demo'&&running){const s=demoSample();applySample(s);history.push(s);if(history.length>2000)history.shift();sampleCount=history.length;if(recording){recording.samples.push(s);if(recording.samples.length>=2000)stopRecord();}render();}
   else if(mode==='live'){if(Date.now()-lastPoll>=1000){lastPoll=Date.now();poll();}render();}
 },1000);
+
+
+// MeshCore settings are receiver-side. No preview or browser radio sender exists.
+function showMeshCore(state){
+  $('meshcore-enabled').checked=state.enabled;
+  $('meshcore-location').checked=state.include_location;
+  $('meshcore-interval').value=state.interval_minutes;
+  const ready=state.radio_configured&&state.dependency_installed;
+  $('meshcore-enabled').disabled=!ready;
+  const remaining=state.next_attempt_in_seconds===null?'':` Next check in about ${Math.ceil(state.next_attempt_in_seconds/60)} min.`;
+  $('meshcore-status').textContent=`${state.enabled?'Enabled':'Disabled'} · ${state.status}.${remaining} ${ready?'Radio configured.':'Install the optional dependency and configure a radio and destination on the receiver first.'}${state.last_submission?' Last submitted: '+new Date(state.last_submission).toLocaleString()+'.':''}`;
+}
+async function refreshMeshCore(){
+  if(mode!=='live'){ $('meshcore-status').textContent='Connect to the local receiver to manage MeshCore. Demo and replay never supply radio telemetry.'; return; }
+  try{showMeshCore(await(await api('/api/meshcore')).json());}
+  catch(e){$('meshcore-status').textContent='MeshCore unavailable: '+e.message;}
+}
+async function setMeshCore(settings){
+  if(mode!=='live'){toast('Connect to the receiver before changing radio settings.');return;}
+  $('meshcore-save').disabled=true;$('meshcore-disable').disabled=true;
+  try{
+    const response=await fetch('/api/meshcore',{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:JSON.stringify(settings),signal:AbortSignal.timeout(6000)});
+    const state=await response.json();if(!response.ok)throw new Error(state.error||'Settings rejected');
+    showMeshCore(state);toast(state.enabled?'MeshCore enabled; first check after the selected interval.':'MeshCore disabled.');
+  }catch(e){$('meshcore-status').textContent=e.message;}
+  finally{$('meshcore-save').disabled=false;$('meshcore-disable').disabled=false;}
+}
+$('meshcore-form').addEventListener('submit',e=>{e.preventDefault();setMeshCore({enabled:$('meshcore-enabled').checked,include_location:$('meshcore-location').checked,interval_minutes:Number($('meshcore-interval').value),device});});
+$('meshcore-disable').addEventListener('click',()=>setMeshCore({enabled:false}));
+$('meshcore-refresh').addEventListener('click',refreshMeshCore);
