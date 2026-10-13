@@ -38,6 +38,8 @@ header{border-top:4px solid var(--yellow);background:#fff}
 .guide-logo{display:block;width:180px;max-width:100%;height:auto;margin-bottom:24px;border-radius:12px}
 .route-preview,.route-large{background:#f6f6f0}
 @media(max-width:850px){.brand{flex-direction:row;justify-content:flex-start;gap:18px}.brand-logo{width:110px}.brand small{text-align:left;max-width:160px;line-height:1.6}.sidebar{padding:16px 22px}.sidebar nav{margin-top:12px}}
+
+.meshcore-form{display:grid;gap:16px;margin:22px 0}.meshcore-form label{display:flex;align-items:center;gap:10px;line-height:1.6}.meshcore-form input[type=checkbox]{accent-color:var(--black);width:18px;height:18px}.meshcore-form input[type=number]{width:95px}.meshcore-card>p{margin-top:12px}
 </style></head>
 <body>
 <aside class="sidebar">
@@ -88,7 +90,20 @@ header{border-top:4px solid var(--yellow);background:#fff}
     <section id="page-setup" class="page" hidden>
       <div class="section-intro"><h2>From the trail to home.</h2><p>The ESP32 captures CAN and GPS. The local logger stores it. Home Assistant makes it useful around the house.</p></div>
       <article class="card"><h2>Connect to your local logger</h2><p>The dashboard and API run on the same device. Start the included server, then open this dashboard at its local address.</p><div class="setup-form"><label>Bike identifier<input id="device-id" value="ultra-bee" maxlength="128"></label><label>Access token (if enabled)<input id="access-token" type="password" autocomplete="off" placeholder="Kept in this tab’s memory only"></label><button id="connect-button" class="primary">Connect</button><button id="start-demo" class="secondary">Use demo data</button></div><p id="connection-message" role="status" class="muted">No bike connection yet. Demo mode is available without hardware.</p><p class="muted">Phone access: open the logger’s LAN address on your home Wi-Fi. No vendor account or external scripts are needed.</p></article>
-      <div class="pipeline"><div><b>01 / CAPTURE</b><h3>On the bike</h3><p>ESP32 + protected CAN interface, GPS receiver and microSD. Silent CAN capture; no vehicle-control endpoint.</p><span>HARDWARE / FIRMWARE PENDING</span></div><div><b>02 / PRESERVE</b><h3>Locally, first</h3><p>Append to SD before upload. Batch to the receiver over Wi-Fi and retry until each sequence is acknowledged.</p><span>RECEIVER IMPLEMENTED</span></div><div><b>03 / UNDERSTAND</b><h3>At home</h3><p>SQLite history, browser dashboard and optional MQTT sensors for Home Assistant. GPS location stays local.</p><span>DASHBOARD + BRIDGE IMPLEMENTED</span></div></div>
+
+      <article class="card meshcore-card" style="margin-top:20px">
+        <div class="card-heading"><div><h2>Receiver MeshCore updates</h2><p>These controls manage the Python receiver. The on-bike XIAO prototype uses separate USB controls. Off on startup; location is shared only when selected.</p></div><span class="tag">OPTIONAL MODULE</span></div>
+        <p>Send fresh, verified battery state and speed to your configured contact or private channel. GPS is optional. A home radio can report only when fresh bike data reaches this receiver.</p>
+        <form id="meshcore-form" class="meshcore-form">
+          <label><input id="meshcore-enabled" type="checkbox"> Enable periodic updates</label>
+          <label><input id="meshcore-location" type="checkbox"> Include GPS location in messages</label>
+          <label>Update interval (minutes)<input id="meshcore-interval" type="number" min="15" max="1440" step="1" value="15" required></label>
+          <div class="button-row"><button type="submit" class="primary" id="meshcore-save">Apply settings</button><button type="button" id="meshcore-disable" class="secondary">Disable module</button><button type="button" id="meshcore-refresh" class="quiet">Refresh status</button></div>
+        </form>
+        <p id="meshcore-status" role="status" class="muted">Connect to the local receiver to manage MeshCore. The simulated preview never transmits.</p>
+        <p class="muted">Messages wait at least the selected interval plus up to one minute of jitter. Missing or stale fields are omitted; old rides are never replayed onto the mesh. Radio submission does not confirm delivery. Switching this dashboard to demo does not disable an already enabled receiver module.</p>
+      </article>
+      <div class="pipeline"><div><b>01 / CAPTURE</b><h3>On the bike</h3><p>ESP32 + protected CAN interface, GPS receiver and microSD. Silent CAN capture; no vehicle-control endpoint.</p><span>HARDWARE / FIRMWARE PENDING</span></div><div><b>02 / PRESERVE</b><h3>Locally, first</h3><p>Append to SD before upload. Batch to the receiver over Wi-Fi and retry until each sequence is acknowledged.</p><span>RECEIVER IMPLEMENTED</span></div><div><b>03 / UNDERSTAND</b><h3>At home</h3><p>SQLite history, browser dashboard and optional MQTT sensors for Home Assistant. GPS location stays local unless you opt into an integration.</p><span>DASHBOARD + BRIDGE IMPLEMENTED</span></div></div>
       <article class="card"><h2>Home Assistant</h2><p>Run the included MQTT bridge beside the logger and connect it to your Mosquitto broker. Discovery adds verified sensors for charge, voltage, current, speed and temperature. Provisional readings are excluded by default. The bridge sends fresh readings once per second, with expiry and device availability.</p><p>Use Home Assistant for storage reminders and missed-update alerts. Keep high-rate raw captures in the bike’s SD log and the logger database.</p><a href="dist/guide.html" class="text-link">Open the setup and API guide ↗</a></article>
     </section>
     <section id="page-research" class="page" hidden>
@@ -105,7 +120,7 @@ header{border-top:4px solid var(--yellow);background:#fff}
       </tbody></table></div></article>
       <article class="card" style="margin-top:20px"><h2>A better log, without assuming an empty bike.</h2><p>The OEM app advertises ride trajectories, and the T-box describes cloud upload. We cannot establish its retention period, sample rate, export options or on-device log depth from these sources. Bee Link records new data independently rather than relying on undocumented vendor history.</p><p>No pin assignment, bitrate, CAN ID or signal scale is supplied as a verified Ultra Bee definition.</p><div class="source-links"><a href="https://play.google.com/store/apps/details?id=com.surron.oversea" target="_blank" rel="noreferrer">Official Android listing ↗</a><a href="https://apps.apple.com/gb/app/surron/id6450043341" target="_blank" rel="noreferrer">Official iPhone listing ↗</a><a href="https://device.report/manual/9999122" target="_blank" rel="noreferrer">Manufacturer T-box manual ↗</a><a href="https://www.home-assistant.io/integrations/mqtt/" target="_blank" rel="noreferrer">Home Assistant MQTT ↗</a></div></article>
     </section>
-  </div><footer>BEE LINK <span>Independent Ultra Bee telemetry · Receive-only design · v0.1</span></footer>
+  </div><footer>BEE LINK <span>Independent Ultra Bee telemetry · Receive-only CAN design · v0.1</span></footer>
 </main><div id="toast" role="status" hidden></div><script>const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const STALE_MS = 10000;
@@ -296,7 +311,7 @@ async function connect(){
     if(!snap.signals||!Array.isArray(hist.samples))throw new Error('This page is not served by the Bee Link local receiver.');
     mode='live';selectedLog=null;running=false;latest=snap.signals;sampleCount=snap.sample_count;variant=snap.variant;history=hist.samples.sort((a,b)=>Date.parse(a.timestamp)-Date.parse(b.timestamp));nextBefore=hist.next_before;connectionError='';lastPoll=Date.now();
     $('connection-message').textContent=`Connected. ${sampleCount} samples stored for ${device}. Waiting for fresh CAN / GPS if the bike is offline.`;
-    captureSummaries=[];captureError='';toast('Local logger connected.');render();refreshCaptures();
+    captureSummaries=[];captureError='';toast('Local logger connected.');render();refreshCaptures();refreshMeshCore();
   }catch(e){if(epoch===connectEpoch){$('connection-message').textContent=`Connection failed: ${e.message} Start server.py and open its local URL. Current preview remains available.`;toast('Could not connect to the local receiver.');}}
   finally{$('connect-button').disabled=false;}
 }
@@ -350,5 +365,35 @@ setInterval(()=>{
   if(mode==='demo'&&running){const s=demoSample();applySample(s);history.push(s);if(history.length>2000)history.shift();sampleCount=history.length;if(recording){recording.samples.push(s);if(recording.samples.length>=2000)stopRecord();}render();}
   else if(mode==='live'){if(Date.now()-lastPoll>=1000){lastPoll=Date.now();poll();}render();}
 },1000);
+
+
+// MeshCore settings are receiver-side. No preview or browser radio sender exists.
+function showMeshCore(state){
+  $('meshcore-enabled').checked=state.enabled;
+  $('meshcore-location').checked=state.include_location;
+  $('meshcore-interval').value=state.interval_minutes;
+  const ready=state.radio_configured&&state.dependency_installed;
+  $('meshcore-enabled').disabled=!ready;
+  const remaining=state.next_attempt_in_seconds===null?'':` Next check in about ${Math.ceil(state.next_attempt_in_seconds/60)} min.`;
+  $('meshcore-status').textContent=`${state.enabled?'Enabled':'Disabled'} · ${state.status}.${remaining} ${ready?'Radio configured.':'Install the optional dependency and configure a radio and destination on the receiver first.'}${state.last_submission?' Last submitted: '+new Date(state.last_submission).toLocaleString()+'.':''}`;
+}
+async function refreshMeshCore(){
+  if(mode!=='live'){ $('meshcore-status').textContent='Connect to the local receiver to manage MeshCore. Demo and replay never supply radio telemetry.'; return; }
+  try{showMeshCore(await(await api('/api/meshcore')).json());}
+  catch(e){$('meshcore-status').textContent='MeshCore unavailable: '+e.message;}
+}
+async function setMeshCore(settings){
+  if(mode!=='live'){toast('Connect to the receiver before changing radio settings.');return;}
+  $('meshcore-save').disabled=true;$('meshcore-disable').disabled=true;
+  try{
+    const response=await fetch('/api/meshcore',{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:JSON.stringify(settings),signal:AbortSignal.timeout(6000)});
+    const state=await response.json();if(!response.ok)throw new Error(state.error||'Settings rejected');
+    showMeshCore(state);toast(state.enabled?'MeshCore enabled; first check after the selected interval.':'MeshCore disabled.');
+  }catch(e){$('meshcore-status').textContent=e.message;}
+  finally{$('meshcore-save').disabled=false;$('meshcore-disable').disabled=false;}
+}
+$('meshcore-form').addEventListener('submit',e=>{e.preventDefault();setMeshCore({enabled:$('meshcore-enabled').checked,include_location:$('meshcore-location').checked,interval_minutes:Number($('meshcore-interval').value),device});});
+$('meshcore-disable').addEventListener('click',()=>setMeshCore({enabled:false}));
+$('meshcore-refresh').addEventListener('click',refreshMeshCore);
 </script>
 </body></html>

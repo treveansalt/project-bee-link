@@ -1,6 +1,6 @@
 # ESP32 + GPS + microSD: firmware implementation contract
 
-This release implements the application/receiver and an SD-file uploader, **not the board firmware**. The following makes firmware development concrete without guessing electrical connections or a CAN protocol.
+This release implements the application/receiver and an SD-file uploader, **not complete on-bike capture firmware**. There is now a separate [experimental XIAO MeshCore/GNSS module](../../firmware/meshcore/README.md). The following contract remains the target for full capture firmware, without guessing electrical connections or a CAN protocol.
 
 ## Working hardware assumption
 
@@ -38,6 +38,10 @@ Send `POST /api/ingest` using [API v1](api.md). Keep batches below 200 samples /
 Do not delete uploaded originals automatically in the pilot. Add explicit export/retention policy after endurance and capacity tests. On full media, surface a storage-full state; any overwrite/ring policy must be deliberate and record which captures were lost.
 
 Local access while riding away from home can eventually use an ESP32 access point serving the same static UI or a local transport. That is **not implemented** in this release; this receiver runs on a PC/Pi/server and firmware would need its own compatible API/storage layer. Wi-Fi AP and home-client transitions, SD access contention and power budget require a separate firmware design. No BLE, Web Bluetooth or phone background recording is currently implemented.
+
+## Optional on-bike MeshCore module
+
+The intended radio path is **Bee-Link XIAO ESP32S3 → Wio-SX1262 → private MeshCore channel**, independent of home Wi-Fi, with the L76K supplying GNSS. See the [embedded module and hardware conflict](../../firmware/meshcore/README.md). Default to disabled, offer separate GPS opt-in and a 15-minute interval with jitter, and keep radio work out of the CAN callback. Failures must not block CAN/GPS logging or replay a backlog. The bench module implements GNSS/radio scheduling and USB settings; it does not yet implement this complete capture contract. In particular, CAN/SD pin allocation and SPI arbitration are unresolved. The existing Python receiver bridge is a separate implementation.
 
 ## Power and parked bike behavior
 

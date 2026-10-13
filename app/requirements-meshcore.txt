@@ -1,0 +1,2 @@
+# Optional companion-radio interface; base dashboard has no radio dependency.
+meshcore==2.3.15
