@@ -24,6 +24,7 @@ The **[app/ section](app/README.md)** contains the Bee Link application prototyp
 | [Local receiver and API](app/docs/api.md) | SQLite storage, raw CAN preservation, acknowledged batch uploads, duplicate protection and JSONL/CSV exports |
 | [Home Assistant](app/README.md#home-assistant) | Optional MQTT discovery bridge for fresh eligible sensors; GPS publication is opt-in |
 | [MeshCore](app/docs/meshcore.md) | Experimental optional companion-radio bridge: 15-minute updates, separate GPS opt-in, disabled on startup |
+| [On-bike MeshCore prototype](firmware/meshcore/README.md) | XIAO ESP32S3/Wio-SX1262/L76K firmware overlay, private-channel telemetry and USB controls; hardware validation pending |
 | [OEM functionality research](app/docs/research.md) | Official app feature inventory, realistic local possibilities and remaining unknowns |
 | [ESP32 design contract](app/docs/esp32.md) | Intended GPS/microSD capture architecture and offline upload/retry behavior; board firmware is pending |
 | [Validation](app/VALIDATION.md) | 36 passing automated tests, browser checks and explicit hardware/integration limits |

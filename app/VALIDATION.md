@@ -2,6 +2,8 @@
 
 ## MeshCore module — 13 October 2026
 
+The later [native XIAO MeshCore/GNSS prototype](../firmware/meshcore/VALIDATION.md) passed its full ESP32S3 cross-build, Mac C++ policy tests and three USB-protocol tests. That module has separate USB controls; the browser controls below operate the Python receiver. Published schematics indicate a GNSS-reset/radio-MOSI conflict requiring specimen checks. No hardware flashing or transmission occurred.
+
 - All 36 automated tests pass on Windows, including 18 new formatter, scheduler, fake companion transport and authenticated control API checks. These cover no startup transmission, the first full-interval delay, failure throttling, no catch-up burst, cancellation before submission, strict settings, GPS opt-in, fresh coordinate pairing, per-field provenance, timestamp and numeric bounds, and radio acceptance versus delivery.
 - Eight reviewed formatter tests pass on the Mac's Python 3.9. The Mac-hosted LM Studio model drafted the formatter through OpenCode. Independent review found future-time, coordinate formatting, range-handling and Python 3.9 timestamp issues; the draft was repaired before integration. The slow model job was stopped after its draft was recovered; its unfinished test-generation step is not a successful validation result.
 - Desktop and 390px phone browser checks passed: disabled/unconfigured state, saving the interval, disabling the module, unique DOM IDs, no page-level horizontal overflow and no browser warnings/errors. JavaScript syntax check passed and the offline preview was rebuilt.

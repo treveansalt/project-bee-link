@@ -52,7 +52,7 @@
       <article class="card"><h2>Connect to your local logger</h2><p>The dashboard and API run on the same device. Start the included server, then open this dashboard at its local address.</p><div class="setup-form"><label>Bike identifier<input id="device-id" value="ultra-bee" maxlength="128"></label><label>Access token (if enabled)<input id="access-token" type="password" autocomplete="off" placeholder="Kept in this tab’s memory only"></label><button id="connect-button" class="primary">Connect</button><button id="start-demo" class="secondary">Use demo data</button></div><p id="connection-message" role="status" class="muted">No bike connection yet. Demo mode is available without hardware.</p><p class="muted">Phone access: open the logger’s LAN address on your home Wi-Fi. No vendor account or external scripts are needed.</p></article>
 
       <article class="card meshcore-card" style="margin-top:20px">
-        <div class="card-heading"><div><h2>MeshCore updates</h2><p>Optional radio messages. Off on startup; location is shared only when selected.</p></div><span class="tag">OPTIONAL MODULE</span></div>
+        <div class="card-heading"><div><h2>Receiver MeshCore updates</h2><p>These controls manage the Python receiver. The on-bike XIAO prototype uses separate USB controls. Off on startup; location is shared only when selected.</p></div><span class="tag">OPTIONAL MODULE</span></div>
         <p>Send fresh, verified battery state and speed to your configured contact or private channel. GPS is optional. A home radio can report only when fresh bike data reaches this receiver.</p>
         <form id="meshcore-form" class="meshcore-form">
           <label><input id="meshcore-enabled" type="checkbox"> Enable periodic updates</label>

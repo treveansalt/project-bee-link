@@ -59,6 +59,8 @@ Choose **Connection & setup → Connect** to read the local receiver. With no ga
 
 ## Optional MeshCore module
 
+The intended on-bike setup is **XIAO ESP32S3 + Wio-SX1262 + L76K → private MeshCore channel**. The [native firmware prototype](../firmware/meshcore/README.md) has separate USB controls and a documented GNSS-reset/radio-MOSI conflict to resolve before bring-up. It is not yet complete CAN/SD capture firmware. The browser controls below manage the Python receiver bridge only.
+
 **Connection & setup → MeshCore** provides enable/disable, an interval (default 15 minutes, minimum 15), and separate GPS-sharing opt-in. The receiver submits compact battery/speed/location text to a deliberately configured contact or private channel. It skips stale, missing and simulated readings and starts disabled after every restart. Install the optional dependency and configure the companion radio before enabling; see [MeshCore setup and limitations](docs/meshcore.md). Automated behaviour is tested with fake radios; over-air delivery remains untested. A home radio only sends live readings while the bike's data reaches home. Riding updates need a travelling receiver/radio or another live link.
 
 ![MeshCore settings on the local receiver](meshcore-preview.jpg)

@@ -23,7 +23,7 @@ There are two materially different radio interfaces:
 - **Separate MeshCore companion node:** the ESP32 talks to an MCU running MeshCore companion firmware through a supported companion transport. This avoids integrating the mesh stack into the CAN logger; exact wired serial framing, firmware build, voltage levels and pin support need validation.
 - **Bare LoRa transceiver attached to the ESP32:** the Bee-Link firmware must integrate the MeshCore stack, supported radio driver and board configuration. A LoRa chip does not run MeshCore by itself. This requires coexistence testing with CAN, GPS and SD tasks, plus RAM, SPI/pin and power-budget checks.
 
-The [official MeshCore firmware repository](https://github.com/meshcore-dev/MeshCore) and [companion protocol documentation](https://docs.meshcore.io/companion_protocol/) are the starting references. Board model, radio module and whether it runs its own MeshCore firmware remain unspecified. No pin assignments, board compatibility or working on-bike firmware are claimed yet.
+The owner has now specified **XIAO ESP32S3 & Wio-SX1262 Kit plus Seeed's L76K GNSS module**. This is the bare-transceiver arrangement. The [embedded module](../../firmware/meshcore/README.md) provides an experimental native MeshCore overlay and USB controls. Its hardware notes identify a documented overlap between radio MOSI and GNSS reset that must be resolved before bring-up. Protected CAN capture, a verified SOC decoder, SD logging and browser controls of the on-bike module remain pending; the Python bridge below is separate.
 
 ## What works in this prototype
 
