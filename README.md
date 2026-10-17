@@ -14,6 +14,10 @@ Bee-Link is a proposed community project to document the Ultra Bee's electronic 
 
 Start with the [Bee Link wiki](https://github.com/treveansalt/project-bee-link/wiki) for setup, dashboard use, capture logging and backups, Home Assistant, the API, hardware plans and troubleshooting. The wiki distinguishes working software from hardware and CAN definitions that still need validation.
 
+## Help and workshop guides
+
+The **[guides section](docs/guides/README.md)** contains printable workshop references. Start with the [Ultra Bee CAN workshop guide (PDF)](docs/guides/Bee-Link-Ultra-Bee-CAN-Workshop-Guide.pdf): four illustrated A4 pages covering connector identification, measurement checks, a parallel CAN tap and a first passive capture. It includes a reference pin table and space for notes; the actual bike and CAN interface still need verification.
+
 ## Application prototype
 
 The **[app/ section](app/README.md)** contains the Bee Link application prototype: a phone-friendly local web dashboard, persistent raw/decoded capture logging, GPS route replay and an optional Home Assistant integration through MQTT. It is ready to accept future ESP32 + GPS captures through a documented API, and has a clearly labelled simulation for development without hardware.
