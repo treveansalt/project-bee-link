@@ -1,0 +1,180 @@
+{
+  "processing": "Pixel crops only, no synthesis, sharpening, rotation, or retouching. Opaque rectangles conceal the SIM identifier and an unclassified handwritten unit marking; coordinates are in source pixels. JPEG re-encoding quality 94, no chroma subsampling. Embedded metadata is not copied. Capture date not independently established; documented 21 October 2026.",
+  "images": [
+    {
+      "file": "board-overview.jpg",
+      "source_photo": 1,
+      "source_sha256": "78d827b575f3e20adf56a39fe55500c0ebecb1722107ac8c6530c2bb3ebda6f0",
+      "source_size": [
+        1524,
+        1143
+      ],
+      "crop_xyxy": [
+        105,
+        235,
+        1400,
+        1080
+      ],
+      "redaction_xyxy": [
+        [
+          970,
+          645,
+          1125,
+          755
+        ]
+      ],
+      "output_size": [
+        1295,
+        845
+      ],
+      "sha256": "c6cd231260349dcbc4eae1a9a8978fab777b8626620f8019c4074e4e927d0876"
+    },
+    {
+      "file": "harness-pad-labels.jpg",
+      "source_photo": 5,
+      "source_sha256": "f73f11c09713623bffdbd51934ae9f66872f84af0a4a1dde485d4e16caa3f4ab",
+      "source_size": [
+        1524,
+        1143
+      ],
+      "crop_xyxy": [
+        170,
+        90,
+        1240,
+        850
+      ],
+      "redaction_xyxy": [],
+      "output_size": [
+        1070,
+        760
+      ],
+      "sha256": "cd1b975f30e168c82a4f4c40db623a8edee8cf53eceb1522e75d4e2a7729b45e"
+    },
+    {
+      "file": "can-transceiver.jpg",
+      "source_photo": 6,
+      "source_sha256": "4b8726d364a7d194da6862ad042e530a9886e44755345e9100e8a336cadf22d3",
+      "source_size": [
+        858,
+        1143
+      ],
+      "crop_xyxy": [
+        120,
+        300,
+        800,
+        890
+      ],
+      "redaction_xyxy": [],
+      "output_size": [
+        680,
+        590
+      ],
+      "sha256": "37bf5c89633502c44bb135dd00522f9436741c4759b1ecf15bf9fbfa83fbe86b"
+    },
+    {
+      "file": "service-pads-and-sim.jpg",
+      "source_photo": 4,
+      "source_sha256": "eb970756327614e7b7c6e20678fe803edf150032c20ce641da4b2c1d088d33e9",
+      "source_size": [
+        858,
+        1143
+      ],
+      "crop_xyxy": [
+        175,
+        190,
+        635,
+        490
+      ],
+      "redaction_xyxy": [
+        [
+          395,
+          245,
+          490,
+          375
+        ]
+      ],
+      "output_size": [
+        460,
+        300
+      ],
+      "sha256": "97309a7145df770b610c174fee408379dc8095cc11991ddedf1b0b8737a59a1a"
+    },
+    {
+      "file": "board-revision-and-radio.jpg",
+      "source_photo": 7,
+      "source_sha256": "355ef00158275535362fb7de9bfdc5164a12c8bce77cb5b6999ad635db9e6665",
+      "source_size": [
+        1524,
+        1143
+      ],
+      "crop_xyxy": [
+        195,
+        270,
+        990,
+        895
+      ],
+      "redaction_xyxy": [
+        [
+          280,
+          285,
+          610,
+          365
+        ]
+      ],
+      "output_size": [
+        795,
+        625
+      ],
+      "sha256": "50c6c27ae8b68b772c15a560ca446379c1bba21a57ce2c919d519a32550fcf46"
+    },
+    {
+      "file": "radio-module-detail.jpg",
+      "source_photo": 8,
+      "source_sha256": "ad0595d561c71e5c29c53b33898bb961cc5b235e366eb401f223bfc366a14c31",
+      "source_size": [
+        1524,
+        1143
+      ],
+      "crop_xyxy": [
+        0,
+        80,
+        1460,
+        960
+      ],
+      "redaction_xyxy": [],
+      "output_size": [
+        1460,
+        880
+      ],
+      "sha256": "c02d9e3dc94ad0667c71693fb6324aa5eb8d551a525cc47aa9f2a72759b6f640"
+    },
+    {
+      "file": "assembly-and-cable.jpg",
+      "source_photo": 3,
+      "source_sha256": "a671716414d991622248b4adfb36792043e63391a61f14edaafe2b352129d8df",
+      "source_size": [
+        858,
+        1143
+      ],
+      "crop_xyxy": [
+        265,
+        195,
+        605,
+        1100
+      ],
+      "redaction_xyxy": [
+        [
+          410,
+          405,
+          445,
+          480
+        ]
+      ],
+      "output_size": [
+        340,
+        905
+      ],
+      "sha256": "36a43f54c4dba6255eede460731e730e0974950a0dd46f55828847d5e6c782be"
+    }
+  ]
+}
