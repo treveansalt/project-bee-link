@@ -79,6 +79,58 @@ Both traces show a small pulse around CSV 66–68 s, then a larger rise and retu
 
 The rear-wheel motion and independently displayed speed were not established in this analysis. Establish those references before assigning a physical quantity or units. These plots do not reconstruct the rider's hand position and do not resolve earlier electrical/error concerns.
 
+## Initial battery telemetry candidates — unconfirmed
+
+Further analysis of the same private short capture suggests battery fields with useful internal consistency. **These are hypotheses derived from this dataset, not published OEM definitions or independently validated battery measurements.** They must not be used to assess charging safety, battery health or serviceability.
+
+Public comparison sources provide context rather than these byte definitions:
+
+- [BeeDash](https://electricmotogarage.com/beedash/app/) reports pack-voltage, state-of-charge and cell-group decoding. The inspected page does not publish the CAN layouts or formulas below.
+- [Battery Reviver](https://electricmotogarage.com/products/surron-battery-reviver/) describes 20 Ultra Bee cell groups. Its illustrative demo values are explicitly fabricated and were not used as calibration evidence.
+- [BraapZap](https://www.braapzap.com/post/surron-ultrabee-canbus) tentatively describes J1939-style PGN 57344 (`0xE000`). Our extended `18E000xx` / `18E00100` identifiers are compatible with that identifier interpretation, but this does not establish their payload meanings or identify the physical sender. The battery candidates below use different, standard-format IDs.
+
+### Candidate battery fields
+
+Positions are **one-based**, with zero-based indexes in parentheses. All listed IDs are standard 11-bit frames with DLC 8 in the analysed capture.
+
+| CAN ID | Payload location | Proposed interpretation | Observed evidence | Status |
+| --- | --- | --- | --- | --- |
+| `0x102` | Bytes 1–2 (indexes 0–1) | Unsigned little-endian ÷ 10, hypothesised pack volts | Raw 793–799 → **79.3–79.9 V**; close to the sum of proposed cell-group readings | Internally corroborated candidate; unconfirmed |
+| `0x103` | Byte 5 (index 4) | Unsigned reported state of charge, hypothesised percent | `46` hex = **70 decimal** in 11,025 records; remaining 597 records contain zero. Owner recalls roughly 70% or more, not an exact independent reference | Tentative; zero/stale/sentinel semantics unresolved |
+| `0x203` | Byte 1 (index 0) | Selector `80`–`84` | Five rotating selector values | Observed structure; meaning unconfirmed |
+| `0x203` | Bytes 2–8 (indexes 1–7) | Four packed unsigned 14-bit little-endian values per selector, hypothesised millivolts | Five groups × four values = **20**; plausible cell values, matching sum and extrema | Internally corroborated candidate; unconfirmed |
+| `0x205` | Bytes 1–2 and 4–5 (indexes 0–1 and 3–4) | Unsigned little-endian maximum/minimum cell-group millivolts | First comparison gives **4020 / 3961**, matching the proposed cell-array extrema | Internally corroborated candidate; unconfirmed |
+
+For the `0x203` hypothesis, interpret bytes 2–8 as one little-endian unsigned integer `p`. The four candidate values are `(p >> (14 × i)) & 0x3FFF`, for `i = 0, 1, 2, 3`. There is no additional scaling if these values are millivolts. This describes a proposed receive-side interpretation, not a command.
+
+Ordering selectors `80` through `84`, then their four fields, creates a logical array. **The physical cell-group numbering is not verified.**
+
+### First complete five-selector set
+
+The following set completed at CSV **7.060853 s**. Values were collected across a rotating cycle, not sampled simultaneously.
+
+| Selector, hex | Four candidate cell-group values, mV |
+| --- | --- |
+| `80` | 3982, 3986, 3986, 3969 |
+| `81` | 3988, 4017, 4018, 4020 |
+| `82` | 4017, 4015, 3973, 3961 |
+| `83` | 3975, 3978, 3975, 4012 |
+| `84` | 4012, 4012, 4012, 4015 |
+
+- Candidate cell sum: **79.923 V**, versus **79.9 V** from the contemporaneous `0x102` interpretation.
+- Candidate minimum/maximum: **3961 / 4020 mV**, also matching the proposed `0x205` fields.
+- Candidate spread for this set: **59 mV**. This is not a battery-health judgement.
+
+Across **1,153 overlapping rolling comparisons**, with all five selectors no more than 1.2 seconds apart, the median cell-sum minus candidate pack voltage was **+0.020 V**; the range was **−0.259 to +0.281 V**. These are correlated snapshots, not independent experiments. Asynchronous updates and changing load are possible explanations for differences, not proven causes.
+
+The proposed cell values span **3926–4021 mV** across those snapshots. Median differences between calculated extrema and the candidate `0x205` maximum/minimum were both **0 mV**. Agreement between fields strengthens a hypothesis but does not replace an independent voltage reference.
+
+### Battery validation still needed
+
+Confirm a simultaneous dashboard SOC and trustworthy pack-voltage reference, then repeat at another normal charge level. Validate stale/sentinel behaviour, cell ordering and timing before implementing a supported decoder. Temperature, state of health, remaining capacity and battery-current definitions are **not established by this comparison**. Earlier electrical-reference and receive-error limitations still apply.
+
+Raw recordings, identifying payloads, device serials, local paths and video location metadata remain private.
+
 ## Timing limitations
 
 The approximate relationship is:
