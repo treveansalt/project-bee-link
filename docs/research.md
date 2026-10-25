@@ -10,6 +10,10 @@ Reviewed **6 October 2026**. This is a bounded public-source review, not indepen
 - **Hypothesis:** a proposal needing an experiment.
 - **Bee-Link verified:** reproduced on an identified specimen with evidence. There are currently no such findings.
 
+## Initial owner capture observations — 25 October 2026
+
+The [initial CAN findings table](findings/2026-10-25-initial-can-observations.md) records candidate ride-mode, reverse and ready-state associations from an owner-supplied narrated T-box capture. It includes hex values, byte indexes, example frames, timing references and unresolved questions. **These are provisional observations, not Bee-Link-verified signal definitions.** Raw recordings remain private; independent replay, electrical validation and variant identification are outstanding.
+
 ## Kevin Graehl / Electric Moto Garage
 
 [Ultra Bee Live](https://kevingraehl.com/projects/ultra-bee-live/) presents pack readings, 20 cell groups and temperatures. It says public telemetry is read-only and control requests need local approval. It showed **waiting for device** during review, so live values were not validated.
