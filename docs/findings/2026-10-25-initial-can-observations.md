@@ -62,6 +62,23 @@ One reverse-associated sequence illustrates why assigning only one field is inco
 
 Interpretations of bytes 1 and 3 in this sequence remain open.
 
+## Raw activity during throttle tests
+
+![Raw CAN candidate channels during throttle exercises; no speed or throttle-position decode established](images/2026-10-25-throttle-related-candidates.png)
+
+The left panels show the recording as a whole; the right panels enlarge the first exercise. Green shading marks approximate narrated throttle windows, and gray marks the interval without video. Axes show raw numeric values, **not throttle percentage, mph, km/h, RPM or amperes**.
+
+| Candidate | Plot interpretation | Observed range | Largest peak |
+| --- | --- | --- | --- |
+| `0x112`, bytes 1–2 | Assumed unsigned 16-bit little-endian: byte 1 + 256 × byte 2 | 0–2,958 | CSV 73.636 s |
+| `0x221`, byte 1 | Unsigned raw byte | 0–43 | CSV 73.644 s |
+
+Both traces show a small pulse around CSV 66–68 s, then a larger rise and return to zero around 70–76 s. Activity also appears around 211–213 s and 228–230 s. The later episode's precise narrated association remains unresolved.
+
+**Was speed captured? Possibly, but no signal is confirmed as speed.** The similar shapes make these useful candidates for related measurements or differently scaled representations. They could reflect motor/wheel speed, throttle demand, current or another correlated quantity. Byte order and field interpretation for `0x112` are plotting assumptions, not validated definitions. The observed peaks are not evidence of 43 mph or 2,958 RPM.
+
+The rear-wheel motion and independently displayed speed were not established in this analysis. Establish those references before assigning a physical quantity or units. These plots do not reconstruct the rider's hand position and do not resolve earlier electrical/error concerns.
+
 ## Timing limitations
 
 The approximate relationship is:
