@@ -2,9 +2,9 @@
 
 > **Research preview, not validated vehicle telemetry.** These observations come from one owner's bike. The device revisions, signal semantics, scaling, invalid values and compatibility across bikes remain unverified. Do not use these candidates for vehicle control or safety decisions.
 
-[Watch the silent CAN replay](images/2026-11-06-can-replay.mp4) · [Earlier observations](2026-10-25-initial-can-observations.md)
+[Watch the updated replay with bike dashboard and 20 candidate group voltages](images/2026-11-06-dashboard-cell-replay.mp4) · [Watch the earlier silent CAN-only replay](images/2026-11-06-can-replay.mp4) · [Earlier observations](2026-10-25-initial-can-observations.md)
 
-The 49-second animation replays approximately 290 seconds of the recording at six times speed. The strip below the dashboard displays the **selected latest recorded bytes**, in hexadecimal, used for the corresponding values above it. It is a derived replay of a single recording, not independent proof of signal identity, signal quality, live reception or real-world speed. It contains no original phone footage or audio. Raw CAN records and source media are not published.
+The 49-second animation replays approximately 290 seconds of the recording at six times speed. The strip below the dashboard displays the **selected latest recorded bytes**, in hexadecimal, used for the corresponding values above it. It is a derived replay of a single recording, not independent proof of signal identity, signal quality, live reception or real-world speed. The earlier replay contains no original phone footage or audio. The updated replay includes a silent crop of the owner’s dashboard footage; the original source video, audio and raw CAN records are not published. The battery and motor temperature labels in the updated replay are illustrative guesses: neither sensor identity nor the assumed Fahrenheit scaling is verified.
 
 ## Capture context
 

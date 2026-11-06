@@ -10,6 +10,12 @@ Bee-Link is a proposed community project to document the Ultra Bee's electronic 
 
 **Ultra Bee only.** Light Bee, Light Bee X/LBX, Light Bee 2 and Hyper Bee models are outside this project's scope. References to those platforms are background research only.
 
+## Milestone: real CAN capture and dashboard replay
+
+[![Watch the Ultra Bee dashboard and CAN capture replay](docs/findings/images/2026-11-06-dashboard-cell-replay-preview.jpg)](docs/findings/images/2026-11-06-dashboard-cell-replay.mp4)
+
+**[Watch the 49-second replay](docs/findings/images/2026-11-06-dashboard-cell-replay.mp4)** of the bike's dashboard alongside recorded CAN data, including 20 candidate cell-group voltages during throttle exercises. The replay is silent and runs at 6× speed. The temperature labels and Fahrenheit conversion are exploratory guesses; sensor identities are unknown. Cell-group numbering, speed scaling and other interpretations also need validation. Video and CAN timing are approximately aligned. This is a research replay, not live or safety-grade telemetry. [Read the evidence and limitations](docs/findings/2026-11-06-can-replay-findings.md).
+
 ## Documentation
 
 Start with the [Bee Link wiki](https://github.com/treveansalt/project-bee-link/wiki) for setup, dashboard use, capture logging and backups, Home Assistant, the API, hardware plans and troubleshooting. The wiki distinguishes working software from hardware and CAN definitions that still need validation.
