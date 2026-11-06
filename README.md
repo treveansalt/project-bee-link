@@ -12,9 +12,9 @@ Bee-Link is a proposed community project to document the Ultra Bee's electronic 
 
 ## Milestone: real CAN capture and dashboard replay
 
-[![Watch the Ultra Bee dashboard and CAN capture replay](docs/findings/images/2026-11-06-dashboard-cell-replay-preview.jpg)](docs/findings/images/2026-11-06-dashboard-cell-replay.mp4)
+[![Watch the Ultra Bee dashboard and CAN capture replay](docs/findings/images/2026-11-06-dashboard-cell-replay-preview.jpg)](docs/findings/2026-11-06-dashboard-replay.md)
 
-**[Watch the 49-second replay](docs/findings/images/2026-11-06-dashboard-cell-replay.mp4)** of the bike's dashboard alongside recorded CAN data, including 20 candidate cell-group voltages during throttle exercises. The replay is silent and runs at 6× speed. The temperature labels and Fahrenheit conversion are exploratory guesses; sensor identities are unknown. Cell-group numbering, speed scaling and other interpretations also need validation. Video and CAN timing are approximately aligned. This is a research replay, not live or safety-grade telemetry. [Read the evidence and limitations](docs/findings/2026-11-06-can-replay-findings.md).
+**[View and download the 49-second replay](docs/findings/2026-11-06-dashboard-replay.md)** of the bike's dashboard alongside recorded CAN data, including 20 candidate cell-group voltages during throttle exercises. The replay is silent and runs at 6× speed. The temperature labels and Fahrenheit conversion are exploratory guesses; sensor identities are unknown. Cell-group numbering, speed scaling and other interpretations also need validation. Video and CAN timing are approximately aligned. This is a research replay, not live or safety-grade telemetry. [Read the evidence and limitations](docs/findings/2026-11-06-can-replay-findings.md).
 
 ## Documentation
 
