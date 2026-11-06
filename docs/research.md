@@ -14,6 +14,8 @@ Reviewed **6 October 2026**. This is a bounded public-source review, not indepen
 
 The [initial CAN findings table](findings/2026-10-25-initial-can-observations.md) records candidate ride-mode, reverse and ready-state associations from an owner-supplied narrated T-box capture. It includes hex values, byte indexes, example frames, timing references and unresolved questions. **These are provisional observations, not Bee-Link-verified signal definitions.** Raw recordings remain private; independent replay, electrical validation and variant identification are outstanding.
 
+The [6 November follow-up](findings/2026-11-06-can-replay-findings.md) adds a silent dashboard replay with selected recorded CAN bytes, a provisional wheel-speed candidate, battery observations and a correction to the earlier state-of-charge hypothesis.
+
 ## Kevin Graehl / Electric Moto Garage
 
 [Ultra Bee Live](https://kevingraehl.com/projects/ultra-bee-live/) presents pack readings, 20 cell groups and temperatures. It says public telemetry is read-only and control requests need local approval. It showed **waiting for device** during review, so live values were not validated.

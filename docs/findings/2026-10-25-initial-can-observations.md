@@ -96,7 +96,7 @@ Positions are **one-based**, with zero-based indexes in parentheses. All listed 
 | CAN ID | Payload location | Proposed interpretation | Observed evidence | Status |
 | --- | --- | --- | --- | --- |
 | `0x102` | Bytes 1–2 (indexes 0–1) | Unsigned little-endian ÷ 10, hypothesised pack volts | Raw 793–799 → **79.3–79.9 V**; close to the sum of proposed cell-group readings | Internally corroborated candidate; unconfirmed |
-| `0x103` | Byte 5 (index 4) | Unsigned reported state of charge, hypothesised percent | `46` hex = **70 decimal** in 11,025 records; remaining 597 records contain zero. Owner recalls roughly 70% or more, not an exact independent reference | Tentative; zero/stale/sentinel semantics unresolved |
+| `0x103` | Byte 5 (index 4) | Unknown; earlier state-of-charge hypothesis contradicted | `46` hex = **70 decimal** in the October capture and again in November while the dashboard displayed approximately 99–96% | **Not accepted as SOC**; meaning unknown. See [November observations](2026-11-06-can-replay-findings.md). |
 | `0x203` | Byte 1 (index 0) | Selector `80`–`84` | Five rotating selector values | Observed structure; meaning unconfirmed |
 | `0x203` | Bytes 2–8 (indexes 1–7) | Four packed unsigned 14-bit little-endian values per selector, hypothesised millivolts | Five groups × four values = **20**; plausible cell values, matching sum and extrema | Internally corroborated candidate; unconfirmed |
 | `0x205` | Bytes 1–2 and 4–5 (indexes 0–1 and 3–4) | Unsigned little-endian maximum/minimum cell-group millivolts | First comparison gives **4020 / 3961**, matching the proposed cell-array extrema | Internally corroborated candidate; unconfirmed |
