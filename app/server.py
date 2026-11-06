@@ -129,7 +129,8 @@ def decode(s, profile):
         return s
     for frame in s["frames"]:
         for rule in profile.get("signals", []):
-            if frame["id"] != rule["id"] or frame["extended"] != rule["extended"]:
+            if (frame["id"] != rule["id"] or frame["extended"] != rule["extended"]
+                    or ("dlc" in rule and frame["dlc"] != rule["dlc"])):
                 continue
             start, length = rule["start_byte"], rule["length_bytes"]
             payload = bytes.fromhex(frame["data"])
@@ -158,7 +159,9 @@ def load_profile(path):
                 or type(rule["start_byte"]) is not int or rule["start_byte"] < 0
                 or type(rule["length_bytes"]) is not int or not 1 <= rule["length_bytes"] <= 8
                 or rule["start_byte"] + rule["length_bytes"] > 8
-                or rule["byte_order"] not in {"little", "big"}):
+                or rule["byte_order"] not in {"little", "big"}
+                or ("dlc" in rule and (type(rule["dlc"]) is not int or not 0 <= rule["dlc"] <= 8
+                    or rule["start_byte"] + rule["length_bytes"] > rule["dlc"]))):
             raise ValueError("invalid protocol rule")
         finite(rule["scale"]); finite(rule["offset"]); textfield(rule, "evidence")
     textfield(p, "version"); textfield(p, "variant")

@@ -3,7 +3,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&
 const STALE_MS = 10000;
 const info = {
   soc_pct:['Charge level','%',0], pack_voltage_v:['Pack voltage','V',1], pack_current_a:['Pack current','A',1],
-  speed_kmh:['Speed','km/h',1], battery_temp_c:['Battery temperature','°C',1], motor_temp_c:['Motor temperature','°C',1],
+  speed_kmh:['Speed','km/h',1], wheel_speed_candidate_mph:['Wheel speed estimate','mph',0], battery_temp_c:['Battery temperature','°C',1], motor_temp_c:['Motor temperature','°C',1],
   controller_temp_c:['Controller temperature','°C',1], odometer_km:['Odometer','km',1],
   latitude:['Latitude','°',5],longitude:['Longitude','°',5],gps_accuracy_m:['GPS accuracy','m',1],satellites:['GPS satellites','',0]
 };
@@ -108,7 +108,7 @@ function renderLive() {
   $('soc-quality').textContent=latest.soc_pct?.confidence?.toUpperCase()||'AWAITING SIGNAL';
   $('capture-status').textContent=mode==='demo'?'Illustrative preview':mode==='replay'?'Recorded capture':`${sampleCount.toLocaleString()} samples stored`;
   $('last-update').textContent=ageText(latest.soc_pct);
-  $('metrics').innerHTML=['pack_voltage_v','pack_current_a','speed_kmh','battery_temp_c','motor_temp_c','controller_temp_c','odometer_km','satellites'].map(metric).join('');
+  $('metrics').innerHTML=['pack_voltage_v','pack_current_a','speed_kmh',...(latest.wheel_speed_candidate_mph?['wheel_speed_candidate_mph']:[]),'battery_temp_c','motor_temp_c','controller_temp_c','odometer_km','satellites'].map(metric).join('');
   route(history,'route-preview');
   const lat=value('latitude'),lon=value('longitude');$('gps-location').textContent=lat==='—'||lon==='—'?'Waiting for a fresh fix':`${lat}, ${lon}`;
   $('gps-accuracy').textContent=value('gps_accuracy_m')==='—'?'—':`${value('gps_accuracy_m')} m`;

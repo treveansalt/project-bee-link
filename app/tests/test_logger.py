@@ -10,7 +10,7 @@ import urllib.error
 import urllib.request
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from server import Handler, Store, ThreadingHTTPServer, validate_sample
+from server import Handler, Store, ThreadingHTTPServer, validate_sample, load_profile
 from mqtt_bridge import discovery, eligible
 
 
@@ -89,6 +89,26 @@ class LoggerTests(unittest.TestCase):
         self.assertEqual(snap["signals"]["pack_current_a"]["decoder_version"],"test-profile-v1")
         wrong=fixture(sequence=2,signals={},frames=s["frames"]);wrong["variant"]="other-specimen"
         self.store.ingest([wrong]);self.assertEqual(self.store.history("test-bike")["samples"][-1]["signals"],{})
+
+    def test_opt_in_wheel_speed_profile_scope_and_raw_preservation(self):
+        profile = load_profile(Path(__file__).resolve().parents[1] / "profiles" / "ultra-bee-2026-11-06-wheel-speed.json")
+        self.store.profile = profile
+        frame = {"id": 0x221, "extended": False, "dlc": 8, "data": "1900000000000000"}
+        sample = fixture(signals={}, frames=[frame]); sample["variant"] = profile["variant"]
+        self.store.ingest([sample])
+        reading = self.store.snapshot("test-bike")["signals"]["wheel_speed_candidate_mph"]
+        self.assertAlmostEqual(reading["value"], 25 * 0.621371)
+        self.assertEqual(reading["confidence"], "provisional")
+        self.assertNotIn("speed_kmh", self.store.snapshot("test-bike")["signals"])
+        self.assertEqual(list(self.store.export("test-bike"))[0]["frames"][0]["data"], frame["data"])
+        for seq, changed in enumerate(({"id": 0x221, "extended": True, "dlc": 8, "data": frame["data"]},
+                                       {"id": 0x221, "extended": False, "dlc": 1, "data": "19"},
+                                       {"id": 0x222, "extended": False, "dlc": 8, "data": frame["data"]}), 2):
+            other = fixture(sequence=seq, signals={}, frames=[changed]); other["variant"] = profile["variant"]
+            self.store.ingest([other])
+        wrong = fixture(sequence=5, signals={}, frames=[frame]); wrong["variant"] = "other-bike"
+        self.store.ingest([wrong])
+        self.assertTrue(all(s["signals"] == {} for s in self.store.history("test-bike")["samples"][1:]))
 
     def test_history_pagination_no_loss(self):
         self.store.ingest([fixture(sequence=i) for i in range(15)])

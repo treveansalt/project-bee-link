@@ -1,0 +1,20 @@
+{
+  "version": "ultra-bee-2026-11-06-wheel-speed-v1",
+  "variant": "owner-ultra-bee-2026-11-06",
+  "signals": [
+    {
+      "key": "wheel_speed_candidate_mph",
+      "id": 545,
+      "extended": false,
+      "dlc": 8,
+      "start_byte": 0,
+      "length_bytes": 1,
+      "byte_order": "little",
+      "signed": false,
+      "scale": 0.621371,
+      "offset": 0,
+      "confidence": "provisional",
+      "evidence": "One raised-wheel capture; 0x221 byte 1 assumed km/h. Scaling and dashboard timing unverified."
+    }
+  ]
+}
